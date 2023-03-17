@@ -1,0 +1,53 @@
+{
+    "name": "inventory_it/api",
+    "description": "The super inventory app",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrey Markhay",
+            "email": "buk2018irinam@gmail.com"
+        },
+        {
+            "name": "Maksim Bezfamilnyi",
+            "email": "zdraff@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-json": "*",
+        "monolog/monolog": "^2.9",
+        "php-di/php-di": "^6.4",
+        "slim/psr7": "^1.6",
+        "slim/slim": "^4.11"
+    },
+    "require-dev": {
+        "jangregor/phpstan-prophecy": "^1.0.0",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/extension-installer": "^1.2.0",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.6.4",
+        "roave/security-advisories": "dev-latest",
+        "squizlabs/php_codesniffer": "^3.7",
+        "vimeo/psalm": "^5.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        },
+        "process-timeout": 0,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

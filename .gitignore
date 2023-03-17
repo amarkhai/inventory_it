@@ -1,5 +1,6 @@
 # Служебные файлы IDE и ОС
-.idea
+.idea/
+.vscode/
 .DS_Store
 
 # Конфигурационные файлы
@@ -13,3 +14,13 @@ docker/postgresql_data/
 
 # composer
 vendor/
+
+# Logs
+/logs/*
+!/logs/README.md
+
+# Cache
+/var/cache/*
+.phpunit.result.cache
+cache.properties
+.php_cs.cache
