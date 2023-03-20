@@ -26,5 +26,12 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
+        \PDO::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+            /** @var array{dsn: string, user: string, password: string} $dbSettings */
+            $dbSettings = $settings->get('db');
+
+            return new PDO($dbSettings['dsn'], $dbSettings['user'], $dbSettings['password']);
+        }
     ]);
 };

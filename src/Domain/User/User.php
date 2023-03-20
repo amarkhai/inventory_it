@@ -15,18 +15,17 @@ class User implements JsonSerializable
 
     private string $password;
 
-    private string $firstName;
+    private ?string $firstName = null;
 
-    private string $lastName;
+    private ?string $lastName = null;
 
     private \DateTimeImmutable $createdAt;
 
-    public function __construct(UuidInterface $uuid, string $username, string $firstName, string $lastName, \DateTimeImmutable $createdAt)
+    public function __construct(UuidInterface $uuid, string $username, string $password, \DateTimeImmutable $createdAt)
     {
         $this->uuid = $uuid;
         $this->username = $username;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
+        $this->password = $password;
         $this->createdAt = $createdAt;
     }
 
@@ -40,12 +39,12 @@ class User implements JsonSerializable
         return $this->username;
     }
 
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
@@ -60,5 +59,25 @@ class User implements JsonSerializable
             'lastName' => $this->lastName,
             'createdAt' => $this->createdAt->format('Y-m-d H:i:s')
         ];
+    }
+
+    public function updateFirstName(?string $firstName): void
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function updateLastName(?string $lastName): void
+    {
+        $this->lastName = $lastName;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }

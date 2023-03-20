@@ -16,6 +16,10 @@ require __DIR__ . '/../vendor/autoload.php';
 // Show errors
 $displayErrorDetails = true;
 
+// Load ENV variables
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
 // Instantiate PHP-DI ContainerBuilder
 $containerBuilder = new ContainerBuilder();
 
