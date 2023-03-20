@@ -15,10 +15,14 @@
     "require": {
         "php": "^8.0",
         "ext-json": "*",
+        "doctrine/migrations": "^3.6",
+        "lcobucci/jwt": "^5.0",
         "monolog/monolog": "^2.9",
         "php-di/php-di": "^6.4",
+        "ramsey/uuid": "^4.7",
         "slim/psr7": "^1.6",
-        "slim/slim": "^4.11"
+        "slim/slim": "^4.11",
+        "symfony/console": "^6.2"
     },
     "require-dev": {
         "jangregor/phpstan-prophecy": "^1.0.0",

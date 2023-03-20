@@ -5,6 +5,7 @@
 
 # Конфигурационные файлы
 .env
+migrations-db.php
 
 # Docker
 docker-compose.override.yml

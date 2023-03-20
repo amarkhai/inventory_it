@@ -1,0 +1,10 @@
+<?php
+use Doctrine\DBAL\DriverManager;
+
+return DriverManager::getConnection([
+    'dbname' => 'test',
+    'user' => 'test',
+    'password' => 'test',
+    'host' => 'db',
+    'driver' => 'pdo_pgsql',
+]);
