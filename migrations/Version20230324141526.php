@@ -26,7 +26,7 @@ final class Version20230324141526 extends AbstractMigration
                     id bigserial constraint items_pk primary key,
                     name varchar(100),
                     description text,
-                    owner_id uuid constraint items_users_uuid_fk references users,
+                    owner_id uuid constraint items_users_id_fk references users,
                     path ltree not null,
                     status item_status not null default \'active\'
             );
@@ -41,7 +41,7 @@ final class Version20230324141526 extends AbstractMigration
                     constraint rights_items_id_fk
                         references items,
                 user_id uuid        not null
-                    constraint rights_users_uuid_fk
+                    constraint rights_users_id_fk
                         references users,
                 type    access_type not null
             );

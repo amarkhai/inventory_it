@@ -22,7 +22,7 @@ return function (ContainerBuilder $containerBuilder) {
                     'level' => Logger::DEBUG,
                 ],
                 'db' => [
-                    'dsn' => $_ENV['DSN'],
+                    'dsn' => $_ENV['DB_DSN'],
                     'user' => $_ENV['DB_USER'],
                     'password' => $_ENV['DB_PASSWORD'],
                 ]

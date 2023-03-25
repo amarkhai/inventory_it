@@ -26,7 +26,7 @@ class PDOUserRepository implements UserRepository
 
         return array_map(function (array $item) {
             $user = new User(
-                Uuid::fromString($item['uuid']),
+                Uuid::fromString($item['id']),
                 $item['username'],
                 $item['password'],
                 \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', $item['created_at'])
@@ -53,10 +53,10 @@ class PDOUserRepository implements UserRepository
     public function save(User $user): void
     {
         $stmt = $this->connection->prepare('
-            INSERT INTO public.users (uuid, username, password, first_name, last_name, created_at)
-            VALUES (:uuid, :username, :password, :first_name, :last_name, :created_at)
+            INSERT INTO public.users (id, username, password, first_name, last_name, created_at)
+            VALUES (:id, :username, :password, :first_name, :last_name, :created_at)
         ');
-        $stmt->bindValue(':uuid', $user->getUuid()->toString());
+        $stmt->bindValue(':id', $user->getUuid()->toString());
         $stmt->bindValue(':username', $user->getUsername());
         $stmt->bindValue(':password', $user->getPassword());
         $stmt->bindValue(':first_name', $user->getFirstName());

@@ -9,7 +9,7 @@ use Ramsey\Uuid\UuidInterface;
 
 class User implements JsonSerializable
 {
-    private UuidInterface $uuid;
+    private UuidInterface $id;
 
     private string $username;
 
@@ -23,7 +23,7 @@ class User implements JsonSerializable
 
     public function __construct(UuidInterface $uuid, string $username, string $password, \DateTimeImmutable $createdAt)
     {
-        $this->uuid = $uuid;
+        $this->id = $uuid;
         $this->username = $username;
         $this->password = $password;
         $this->createdAt = $createdAt;
@@ -53,7 +53,7 @@ class User implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'uuid' => $this->uuid,
+            'id' => $this->id,
             'username' => $this->username,
             'firstName' => $this->firstName,
             'lastName' => $this->lastName,
