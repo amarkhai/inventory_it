@@ -7,14 +7,11 @@ namespace Migration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20230324141526 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Таблица items и rights';
+        return 'Создание таблиц items и rights';
     }
 
     public function up(Schema $schema): void
@@ -22,28 +19,21 @@ final class Version20230324141526 extends AbstractMigration
         $this->addSql('CREATE TYPE access_type AS ENUM (\'rw\',\'ro\');');
         $this->addSql('CREATE TYPE item_status AS ENUM (\'active\',\'deleted\');');
         $this->addSql('
-            create table if not exists items (
-                    id bigserial constraint items_pk primary key,
-                    name varchar(100),
-                    description text,
-                    owner_id uuid constraint items_users_id_fk references users,
-                    path ltree not null,
-                    status item_status not null default \'active\'
+            CREATE TABLE ITEMS (
+                    id BIGSERIAL CONSTRAINT items_pk PRIMARY KEY,
+                    name VARCHAR(100),
+                    description TEXT,
+                    owner_id UUID CONSTRAINT items_users_id_fk REFERENCES users,
+                    path LTREE NOT NULL,
+                    status item_status NOT NULL DEFAULT \'active\'
             );
         ');
-
-        $this->addSql('create table rights
-            (
-                id      uuid
-                    constraint rights_pk
-                        primary key,
-                item_id bigint      not null
-                    constraint rights_items_id_fk
-                        references items,
-                user_id uuid        not null
-                    constraint rights_users_id_fk
-                        references users,
-                type    access_type not null
+        $this->addSql('
+            CREATE TABLE rights (
+                id UUID CONSTRAINT rights_pk PRIMARY KEY,
+                item_id BIGINT NOT NULL CONSTRAINT rights_items_id_fk REFERENCES items,
+                user_id UUID NOT NULL CONSTRAINT rights_users_id_fk REFERENCES users,
+                type access_type NOT NULL
             );
         ');
     }
