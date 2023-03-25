@@ -41,7 +41,7 @@ class PDOUserRepository implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function findUserOfId(UuidInterface $uuid): User
+    public function findUserOfId(UuidInterface $id): User
     {
         if (!isset($this->users[$id])) {
             throw new UserNotFoundException();
@@ -56,7 +56,7 @@ class PDOUserRepository implements UserRepository
             INSERT INTO public.users (id, username, password, first_name, last_name, created_at)
             VALUES (:id, :username, :password, :first_name, :last_name, :created_at)
         ');
-        $stmt->bindValue(':id', $user->getUuid()->toString());
+        $stmt->bindValue(':id', $user->getId()->toString());
         $stmt->bindValue(':username', $user->getUsername());
         $stmt->bindValue(':password', $user->getPassword());
         $stmt->bindValue(':first_name', $user->getFirstName());
@@ -65,7 +65,7 @@ class PDOUserRepository implements UserRepository
 
         $stmt->execute();
     }
-    public function delete(UuidInterface $uuid): void
+    public function delete(UuidInterface $id): void
     {
         // TODO: Implement delete() method.
     }

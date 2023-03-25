@@ -41,7 +41,7 @@ class CreateUserCommand extends Command
 
         $this->userRepository->save($user);
 
-        $output->writeln('Uuid: ' . $user->getUuid()->toString());
+        $output->writeln('Id: ' . $user->getId()->toString());
         return Command::SUCCESS;
     }
 }

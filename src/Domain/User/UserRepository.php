@@ -16,9 +16,9 @@ interface UserRepository
     /**
      * @throws UserNotFoundException
      */
-    public function findUserOfId(UuidInterface $uuid): User;
+    public function findUserOfId(UuidInterface $id): User;
 
     public function save(User $user): void;
 
-    public function delete(UuidInterface $uuid): void;
+    public function delete(UuidInterface $id): void;
 }

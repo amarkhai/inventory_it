@@ -21,17 +21,17 @@ class User implements JsonSerializable
 
     private \DateTimeImmutable $createdAt;
 
-    public function __construct(UuidInterface $uuid, string $username, string $password, \DateTimeImmutable $createdAt)
+    public function __construct(UuidInterface $id, string $username, string $password, \DateTimeImmutable $createdAt)
     {
-        $this->id = $uuid;
+        $this->id = $id;
         $this->username = $username;
         $this->password = $password;
         $this->createdAt = $createdAt;
     }
 
-    public function getUuid(): UuidInterface
+    public function getId(): UuidInterface
     {
-        return $this->uuid;
+        return $this->id;
     }
 
     public function getUsername(): string
