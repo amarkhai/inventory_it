@@ -19,12 +19,10 @@ final class Version20230321125634 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('create extension if not exists ltree;');
+        $this->addSql('CREATE EXTENSION IF NOT EXISTS ltree;');
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-
     }
 }
