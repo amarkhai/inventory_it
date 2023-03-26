@@ -13,7 +13,7 @@ paths:
       summary: Получение items, доступных пользователю
       description: Получение в виде списка, деревья формируются на клиенте
       parameters:
-        - name: parentId
+        - name: rootId
           in: query
           description: Если указан, то отдаем только его и дочерние элементы
           required: false
@@ -28,65 +28,59 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/GetItems_Item'      
+                  $ref: '#/components/schemas/GetItems_Item'
         '401':
           description: Не авторизован
 
-          
+
     post:
       tags:
         - items
-      summary: Добавление новых items
+      summary: Добавление новой item
       description: Используются временные t_id и t_path, сгенерированные на клиенте, которые потом на сервере заменяются на постоянные
       requestBody:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/PostItems_Item'  
+              $ref: '#/components/schemas/PostItems_Item'
         required: true
       responses:
         '200':
-          description: Массив из id и t_id
+          description: Объект с id и t_id
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  $ref: '#/components/schemas/PermanentID'  
+                $ref: '#/components/schemas/PermanentID'
         '400':
           description: Неправильный запрос / ошибки валидации
         '401':
           description: Не авторизован
         '403':
           description: Нет прав
-    
-    put:  
+
+    put:
       tags:
-        - items       
-      summary: Пакетное изменение items
+        - items
+      summary: Изменение item
       requestBody:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/PutItems_Item'  
+              $ref: '#/components/schemas/PutItems_Item'
       responses:
         '200':
           description: Возвращаем true в случае успеха
           content:
             application/json:
               schema:
-                type: boolean           
+                type: boolean
         '400':
           description: Неправильный запрос / ошибки валидации
         '401':
           description: Не авторизован
         '403':
           description: Нет прав
-          
+
   /items/{itemId}:
     get:
       tags:
@@ -106,17 +100,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetItems_Item'    
+                $ref: '#/components/schemas/GetItems_Item'
         '401':
           description: Не авторизован
         '403':
-          description: Нет прав      
-          
+          description: Нет прав
+
   /items/findByTerm:
     get:
       tags:
         - items
-      summary: Поиск items по ключевому слову с полным указанием места нахождения
+      summary: Поиск items по ключевому слову
       parameters:
         - name: term
           in: query
@@ -126,19 +120,19 @@ paths:
             type: string
       responses:
         '200':
-          description: Отдаем items
+          description: Отдаем items с полным указанием места нахождения
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetItemsFyndByTerm_Item'    
+                $ref: '#/components/schemas/GetItemsFyndByTerm_Item'
         '401':
           description: Не авторизован
         '403':
           description: Нет прав
-   
+
 components:
   schemas:
-          
+
     GetItems_Item:
       type: object
       properties:
@@ -157,7 +151,7 @@ components:
           example: '12.15.134'
         rights:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/GetItems_Item_Right'
     GetItems_Item_Right:
       type: object
@@ -186,9 +180,9 @@ components:
           example: vasya
         email:
           type: string
-          example: vasya@email.com         
-            
-            
+          example: vasya@email.com
+
+
     PostItems_Item:
       type: object
       properties:
@@ -203,10 +197,10 @@ components:
           example: стеллаж
         t_path:
           type: string
-          example: 'abcdefds.fdsvfd.svdfv' 
+          example: 'abcdefds.fdsvfd.svdfv'
         rights:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/PostItems_Item_Right'
     PostItems_Item_Right:
       type: object
@@ -225,9 +219,9 @@ components:
         email:
           type: string
           example: vasya@email.com
-      
-      
-            
+
+
+
     PutItems_Item:
       type: object
       required:
@@ -242,7 +236,7 @@ components:
           example: стеллаж
         description:
           type: string
-          example: стеллаж  
+          example: стеллаж
         path:
           type: string
           example: '12.15.134'
@@ -254,7 +248,7 @@ components:
             - deleted
         rights:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/PutItems_Item_Right'
     PutItems_Item_Right:
       type: object
@@ -313,7 +307,7 @@ components:
         item_id:
           type: string
           example: '12.15.134'
-        user_id: 
+        user_id:
           type: string
           format: uuid
           example: 3422b448-2460-4fd2-9183-8000de6f8343
@@ -355,6 +349,5 @@ components:
           example: vasya@email.com
         password:
           type: string
-          example: '12345'    
+          example: '12345'
 
-                
