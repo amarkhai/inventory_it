@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use Ramsey\Uuid\UuidInterface;
+
 interface UserRepository
 {
     /**
@@ -12,9 +14,11 @@ interface UserRepository
     public function findAll(): array;
 
     /**
-     * @param int $id
-     * @return User
      * @throws UserNotFoundException
      */
-    public function findUserOfId(int $id): User;
+    public function findUserOfId(UuidInterface $id): User;
+
+    public function save(User $user): void;
+
+    public function delete(UuidInterface $id): void;
 }

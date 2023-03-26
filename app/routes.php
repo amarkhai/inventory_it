@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Actions\Auth\Token\AccessTokenByPasswordAction;
+use App\Application\Actions\Item\ListItemsAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -23,5 +25,13 @@ return function (App $app) {
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);
         $group->get('/{id}', ViewUserAction::class);
+    });
+
+    $app->group('/auth', function (Group $group) {
+        $group->post('/access-token', AccessTokenByPasswordAction::class);
+    });
+
+    $app->group('/items', function (Group $group) {
+        $group->get('', ListItemsAction::class);
     });
 };

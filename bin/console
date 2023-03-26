@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+// application.php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use App\Infrastructure\Command\Faker\FillFakesCommand;
+use App\Infrastructure\Command\User\CreateUserCommand;
+use DI\ContainerBuilder;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+
+// Load ENV variables
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
+// Instantiate PHP-DI ContainerBuilder
+$containerBuilder = new ContainerBuilder();
+
+// Set up settings
+$settings = require __DIR__ . '/../app/settings.php';
+$settings($containerBuilder);
+
+// Set up dependencies
+$dependencies = require __DIR__ . '/../app/dependencies.php';
+$dependencies($containerBuilder);
+
+// Set up repositories
+$repositories = require __DIR__ . '/../app/repositories.php';
+$repositories($containerBuilder);
+
+// Build PHP-DI Container instance
+$container = $containerBuilder->build();
+
+$application->add($container->get(CreateUserCommand::class));
+$application->add($container->get(FillFakesCommand::class));
+
+$application->run();

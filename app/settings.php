@@ -21,6 +21,15 @@ return function (ContainerBuilder $containerBuilder) {
                     'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
                     'level' => Logger::DEBUG,
                 ],
+                'db' => [
+                    'dsn' => $_ENV['DB_DSN'],
+                    'user' => $_ENV['DB_USER'],
+                    'password' => $_ENV['DB_PASSWORD'],
+                ],
+                'JWT' => [
+                    'token_expiration_time' => $_ENV['JWT_TOKEN_EXPIRATION_TIME'],
+                    'secret' => $_ENV['JWT_SECRET'],
+                ],
             ]);
         }
     ]);

@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: Inventory it API
+  version: 0.0.1
+tags:
+  - name: items
+    description: Физические объекты, которые могут содержать другие объекты. Из них строится дерево.
+paths:
+  /items:
+    get:
+      tags:
+        - items
+      summary: Получение items, доступных пользователю
+      description: Получение в виде списка, деревья формируются на клиенте
+      parameters:
+        - name: rootId
+          in: query
+          description: Если указан, то отдаем только его и дочерние элементы
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Массив items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetItems_Item'
+        '401':
+          description: Не авторизован
+
+
+    post:
+      tags:
+        - items
+      summary: Добавление новой item
+      description: Используются временные t_id и t_path, сгенерированные на клиенте, которые потом на сервере заменяются на постоянные
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostItems_Item'
+        required: true
+      responses:
+        '200':
+          description: Объект с id и t_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermanentID'
+        '400':
+          description: Неправильный запрос / ошибки валидации
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+    put:
+      tags:
+        - items
+      summary: Изменение item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutItems_Item'
+      responses:
+        '200':
+          description: Возвращаем true в случае успеха
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Неправильный запрос / ошибки валидации
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+  /items/{itemId}:
+    get:
+      tags:
+        - items
+      summary: Получение item по ID
+      parameters:
+        - name: itemId
+          in: path
+          description: ID of item
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Отдаем item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetItems_Item'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+  /items/findByTerm:
+    get:
+      tags:
+        - items
+      summary: Поиск items по ключевому слову
+      parameters:
+        - name: term
+          in: query
+          description: Ключевое слово, по которому будет поиск
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Отдаем items с полным указанием места нахождения
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetItemsFyndByTerm_Item'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+components:
+  schemas:
+
+    GetItems_Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: стеллаж
+        description:
+          type: string
+          example: стеллаж
+        path:
+          type: string
+          example: '12.15.134'
+        rights:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetItems_Item_Right'
+    GetItems_Item_Right:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        user:
+          $ref: '#/components/schemas/GetItems_Item_Right_User'
+        type:
+          type: string
+          example: ro
+          enum:
+            - ro
+            - rw
+    GetItems_Item_Right_User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        username:
+          type: string
+          example: vasya
+        email:
+          type: string
+          example: vasya@email.com
+
+
+    PostItems_Item:
+      type: object
+      properties:
+        t_id:
+          type: string
+          example: 'abcdef'
+        name:
+          type: string
+          example: стеллаж
+        description:
+          type: string
+          example: стеллаж
+        t_path:
+          type: string
+          example: 'abcdefds.fdsvfd.svdfv'
+        rights:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostItems_Item_Right'
+    PostItems_Item_Right:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/PostItems_Item_Right_User'
+        type:
+          type: string
+          example: ro
+          enum:
+            - ro
+            - rw
+    PostItems_Item_Right_User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: vasya@email.com
+
+
+
+    PutItems_Item:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: стеллаж
+        description:
+          type: string
+          example: стеллаж
+        path:
+          type: string
+          example: '12.15.134'
+        status:
+          type: string
+          example: active
+          enum:
+            - active
+            - deleted
+        rights:
+          type: array
+          items:
+            $ref: '#/components/schemas/PutItems_Item_Right'
+    PutItems_Item_Right:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        user:
+          $ref: '#/components/schemas/PutItems_Item_Right_User'
+        type:
+          type: string
+          example: ro
+          enum:
+            - ro
+            - rw
+    PutItems_Item_Right_User:
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        email:
+          type: string
+          example: vasya@email.com
+
+    GetItemsFyndByTerm_Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: стеллаж
+        description:
+          type: string
+          example: стеллаж
+        path:
+          type: string
+          example: '12.15.134'
+        path_names:
+          type: array
+          items:
+            type: string
+          example: ['Дом', 'Комната', 'Шкаф']
+
+    Right:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        item_id:
+          type: string
+          example: '12.15.134'
+        user_id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        type:
+          type: string
+          example: ro
+          enum:
+            - ro
+            - rw
+
+    PermanentID:
+      type: object
+      properties:
+        t_id:
+          type: string
+          example: 'sdfsd'
+        id:
+          type: integer
+          example: 10
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        username:
+          type: string
+          example: vasya
+        firstName:
+          type: string
+          example: Vasya
+        lastName:
+          type: string
+          example: Pupkin
+        email:
+          type: string
+          example: vasya@email.com
+        password:
+          type: string
+          example: '12345'
+

@@ -5,26 +5,31 @@ declare(strict_types=1);
 namespace App\Domain\User;
 
 use JsonSerializable;
+use Ramsey\Uuid\UuidInterface;
 
 class User implements JsonSerializable
 {
-    private ?int $id;
+    private UuidInterface $id;
 
     private string $username;
 
-    private string $firstName;
+    private string $password;
 
-    private string $lastName;
+    private ?string $firstName = null;
 
-    public function __construct(?int $id, string $username, string $firstName, string $lastName)
+    private ?string $lastName = null;
+
+    private \DateTimeImmutable $createdAt;
+
+    public function __construct(UuidInterface $id, string $username, string $password, \DateTimeImmutable $createdAt)
     {
         $this->id = $id;
-        $this->username = strtolower($username);
-        $this->firstName = ucfirst($firstName);
-        $this->lastName = ucfirst($lastName);
+        $this->username = $username;
+        $this->password = $password;
+        $this->createdAt = $createdAt;
     }
 
-    public function getId(): ?int
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
@@ -34,12 +39,12 @@ class User implements JsonSerializable
         return $this->username;
     }
 
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
@@ -52,6 +57,27 @@ class User implements JsonSerializable
             'username' => $this->username,
             'firstName' => $this->firstName,
             'lastName' => $this->lastName,
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s')
         ];
+    }
+
+    public function updateFirstName(?string $firstName): void
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function updateLastName(?string $lastName): void
+    {
+        $this->lastName = $lastName;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }

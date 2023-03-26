@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Settings\SettingsInterface;
+use App\Application\UseCase\Auth\JWTTokenCreator;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -26,5 +27,19 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
+        \PDO::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+            /** @var array{dsn: string, user: string, password: string} $dbSettings */
+            $dbSettings = $settings->get('db');
+
+            return new PDO($dbSettings['dsn'], $dbSettings['user'], $dbSettings['password']);
+        },
+        JWTTokenCreator::class => function (ContainerInterface $c) {
+            $settings = $settings = $c->get(SettingsInterface::class);
+            /** @var array{token_expiration_time: int, secret: string} $jwtSetting */
+            $jwtSetting = $settings->get('JWT');
+
+            return new JWTTokenCreator((int) $jwtSetting['token_expiration_time'], $jwtSetting['secret']);
+        }
     ]);
 };
