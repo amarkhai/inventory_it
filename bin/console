@@ -4,6 +4,7 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
+use App\Infrastructure\Command\Faker\FillFakesCommand;
 use App\Infrastructure\Command\User\CreateUserCommand;
 use DI\ContainerBuilder;
 use Symfony\Component\Console\Application;
@@ -33,5 +34,6 @@ $repositories($containerBuilder);
 $container = $containerBuilder->build();
 
 $application->add($container->get(CreateUserCommand::class));
+$application->add($container->get(FillFakesCommand::class));
 
 $application->run();
