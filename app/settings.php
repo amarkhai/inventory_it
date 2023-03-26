@@ -25,7 +25,11 @@ return function (ContainerBuilder $containerBuilder) {
                     'dsn' => $_ENV['DB_DSN'],
                     'user' => $_ENV['DB_USER'],
                     'password' => $_ENV['DB_PASSWORD'],
-                ]
+                ],
+                'JWT' => [
+                    'token_expiration_time' => $_ENV['JWT_TOKEN_EXPIRATION_TIME'],
+                    'secret' => $_ENV['JWT_SECRET'],
+                ],
             ]);
         }
     ]);

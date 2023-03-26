@@ -43,11 +43,24 @@ class PDOUserRepository implements UserRepository
      */
     public function findUserOfId(UuidInterface $id): User
     {
-        if (!isset($this->users[$id])) {
-            throw new UserNotFoundException();
+        $stmt = $this->connection->prepare('SELECT * FROM users WHERE id = ?');
+        $stmt->execute([$id->toString()]);
+        $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if ($userData === false) {
+            throw new UserNotFoundException('Пользователь не найден');
         }
 
-        return $this->users[$id];
+        $user = new User(
+            Uuid::fromString($userData['id']),
+            $userData['username'],
+            $userData['password'],
+            \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', $userData['created_at'])
+        );
+        $user->updateFirstName($userData['first_name']);
+        $user->updateLastName($userData['last_name']);
+
+        return $user;
     }
 
     public function save(User $user): void
