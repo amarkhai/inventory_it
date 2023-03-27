@@ -405,6 +405,11 @@ components:
               type: string
               format: 'date-time'
               example: '2023-03-27T15:56:30+00:00'
+            nbf:
+              description: Время, начиная с которого, токен считается валидным
+              type: string
+              format: 'date-time'
+              example: '2023-03-27T15:56:30+00:00'
             access_token:
               description: Access-token
               type: string
