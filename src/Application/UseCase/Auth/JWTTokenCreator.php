@@ -32,7 +32,9 @@ class JWTTokenCreator
         $now   = new \DateTimeImmutable();
         return $tokenBuilder
             ->issuedAt($now)
+            ->canOnlyBeUsedAfter($now)
             ->expiresAt($now->modify('+ ' . $this->expirationTime . ' second'))
+            ->withClaim('uuid', $user->getId()->toString())
             ->getToken($algorithm, $signingKey);
     }
 }

@@ -42,11 +42,10 @@ class AccessTokenByPasswordAction extends Action
 
         $token = $this->JWTTokenCreator->createForUser($user);
 
-
-
         return $this->respondWithData([
             'iat' => $token->claims()->get('iat')->format('c'),
             'exp' => $token->claims()->get('exp')->format('c'),
+            'nbf' => $token->claims()->get('nbf')->format('c'),
             'access_token' => $token->toString(),
         ]);
     }
