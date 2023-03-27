@@ -130,6 +130,30 @@ paths:
         '403':
           description: Нет прав
 
+  /auth/access-token:
+    post:
+      tags:
+        - Auth
+      summary: Получение токена по id и паролю пользователя
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccessTokenRequest'
+      responses:
+        200:
+          description: Успешное получение токена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+        400:
+          description: Некорректный запрос
+        404:
+          description: Пользователь не найден
+
+
+
 components:
   schemas:
 
@@ -350,4 +374,41 @@ components:
         password:
           type: string
           example: '12345'
+
+    AccessTokenRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3422b448-2460-4fd2-9183-8000de6f8343
+        password:
+          type: string
+          example: '12345'
+
+    AccessTokenResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        data:
+          type: object
+          properties:
+            iat:
+              description: Время создания токена
+              type: string
+              format: 'date-time'
+              example: '2023-03-27T15:56:30+00:00'
+            exp:
+              description: Время протухания токена
+              type: string
+              format: 'date-time'
+              example: '2023-03-27T15:56:30+00:00'
+            access_token:
+              description: Access-token
+              type: string
+              example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2Nzk5MzI1OTAuMTgyNDI1LCJleHAiOjE2Nzk5MzYxOTAuMTgyNDI1fQ.z376dT-BTkzGMZSr0d2bm_9zlQnonQZkWNoULcH7fz0
+
+
 
