@@ -87,7 +87,11 @@ class PDOItemRepository implements ItemRepository
         $stmt->bindValue(':status', $item->getStatus()->status());
         $stmt->execute();
 
-        return $stmt->fetchObject(ItemIdMapping::class, [$item->getTid()]);
+        $itemIdMapping = $stmt->fetchObject(ItemIdMapping::class, [$item->getTid()]);
+        if ($itemIdMapping === false) {
+            throw new \RuntimeException('Не удалось создать объект ItemIdMapping для Item с id=' . $item->getId());
+        }
+        return $itemIdMapping;
     }
 
     private function findSubtree(UuidInterface $userId, int $rootItemId): array

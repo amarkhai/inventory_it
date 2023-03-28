@@ -54,7 +54,7 @@ abstract class Action
         return $this->request->getParsedBody();
     }
 
-    protected function resolveArg(string $name)
+    protected function resolveArg(string $name): mixed
     {
         if (!isset($this->args[$name])) {
             throw new HttpBadRequestException($this->request, "Could not resolve argument `{$name}`.");
@@ -66,7 +66,7 @@ abstract class Action
     /**
      * @throws \JsonException
      */
-    protected function respondWithData($data = null, int $statusCode = 200): Response
+    protected function respondWithData(mixed $data = null, int $statusCode = 200): Response
     {
         $payload = new ActionPayload($statusCode, $data);
 

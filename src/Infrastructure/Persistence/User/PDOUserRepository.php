@@ -21,7 +21,13 @@ class PDOUserRepository implements UserRepository
      */
     public function findAll(): array
     {
-        $users = $this->connection->query('SELECT * FROM users;')->fetchAll(\PDO::FETCH_ASSOC);
+        $query = $this->connection->query('SELECT * FROM users;');
+
+        if ($query === false) {
+            throw new \RuntimeException('Не удалось получить список из всех пользователей');
+        }
+
+        $users = $query->fetchAll(\PDO::FETCH_ASSOC);
 
         return array_map(function (array $item) {
             $createdAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', $item['created_at']);
