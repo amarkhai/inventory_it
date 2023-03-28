@@ -15,12 +15,14 @@ use Lcobucci\JWT\UnencryptedToken;
 
 class JWTTokenCreator
 {
+    /**
+     * @param non-empty-string $secret
+     */
     public function __construct(
         /** Время жизни токена в секундах */
         private readonly int $expirationTime,
         private readonly string $secret
-    )
-    {
+    ) {
     }
 
     public function createForUser(User $user): UnencryptedToken
@@ -30,10 +32,14 @@ class JWTTokenCreator
         $signingKey   = InMemory::plainText($this->secret);
 
         $now   = new \DateTimeImmutable();
+        $expiresAt = $now->modify('+ ' . $this->expirationTime . ' second');
+        if ($expiresAt === false) {
+            throw new \RuntimeException('Не удалось сгенерировать время протухания токена');
+        }
         return $tokenBuilder
             ->issuedAt($now)
             ->canOnlyBeUsedAfter($now)
-            ->expiresAt($now->modify('+ ' . $this->expirationTime . ' second'))
+            ->expiresAt($expiresAt)
             ->withClaim('uuid', $user->getId()->toString())
             ->getToken($algorithm, $signingKey);
     }

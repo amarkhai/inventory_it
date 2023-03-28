@@ -51,10 +51,7 @@ class Item implements JsonSerializable
         $this->description = $description;
     }
 
-    /**
-     * @return int
-     */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

@@ -23,6 +23,8 @@ jobs:
           ${{ runner.os }}-php-
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
+    - name: Code Sniffer
+      run: vendor/bin/phpcs
     - name: Psalm
       run: vendor/bin/psalm
     - name: PHPStan

@@ -58,7 +58,8 @@ readonly class PDOItemRepository implements ItemRepository
      * @inheritDoc
      */
     public function findAllForUserByTerm(UuidInterface $userId, string $term): array
-    {//@todo проверить
+    {
+//@todo проверить
         $stmt = $this->connection->prepare('SELECT * FROM items WHERE owner_id=:owner_id');
         $stmt->bindValue(':owner_id', $userId);
         $stmt->execute();
@@ -69,7 +70,8 @@ readonly class PDOItemRepository implements ItemRepository
      * @inheritDoc
      */
     public function insert(Item $item): ItemIdMapping
-    {//@todo проверить
+    {
+//@todo проверить
         $parentPath = $item->getParentPath();
         $parentPath = $parentPath ? $parentPath . '.' : '';
 
@@ -107,7 +109,8 @@ readonly class PDOItemRepository implements ItemRepository
     }
 
     public function update(Item $item): bool
-    {//@todo проверить
+    {
+//@todo проверить
         $stmt = $this->connection->prepare('
             UPDATE public.items SET 
                 name=:name, 
@@ -122,7 +125,8 @@ readonly class PDOItemRepository implements ItemRepository
         $stmt->bindValue(':path', $item->getPath());
         $stmt->bindValue(':status', $item->getStatus());
         $stmt->execute();
-        return $stmt->fetchObject(ItemIdMapping::class, ['t_id' => $item->getT_id()]);
+//        return $stmt->fetchObject(ItemIdMapping::class, ['t_id' => $item->getT_id()]);
+        return true;
     }
 
     private static function rowToObject(array $row): Item

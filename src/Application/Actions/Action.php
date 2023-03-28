@@ -49,18 +49,11 @@ abstract class Action
      */
     abstract protected function action(): Response;
 
-    /**
-     * @return array|object
-     */
-    protected function getFormData()
+    protected function getFormData(): object|array|null
     {
         return $this->request->getParsedBody();
     }
 
-    /**
-     * @return mixed
-     * @throws HttpBadRequestException
-     */
     protected function resolveArg(string $name)
     {
         if (!isset($this->args[$name])) {
@@ -71,7 +64,7 @@ abstract class Action
     }
 
     /**
-     * @param array|object|null $data
+     * @throws \JsonException
      */
     protected function respondWithData($data = null, int $statusCode = 200): Response
     {
@@ -80,9 +73,13 @@ abstract class Action
         return $this->respond($payload);
     }
 
+    /**
+     * @throws \JsonException
+     */
     protected function respond(ActionPayload $payload): Response
     {
-        $json = json_encode($payload, JSON_PRETTY_PRINT);
+        $json = json_encode($payload, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        /** @psalm-suppress PossiblyFalseArgument $json не может быть false из-за флага JSON_THROW_ON_ERROR */
         $this->response->getBody()->write($json);
 
         return $this->response
