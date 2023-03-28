@@ -13,7 +13,7 @@ use Ramsey\Uuid\UuidInterface;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpNotFoundException;
 
-readonly class PDOItemRepository implements ItemRepository
+class PDOItemRepository implements ItemRepository
 {
     public function __construct(private \PDO $connection)
     {
@@ -87,7 +87,7 @@ readonly class PDOItemRepository implements ItemRepository
         $stmt->bindValue(':status', $item->getStatus()->status());
         $stmt->execute();
 
-        return $stmt->fetchObject(ItemIdMapping::class, [$item->getT_id()]);
+        return $stmt->fetchObject(ItemIdMapping::class, [$item->getTid()]);
     }
 
     private function findSubtree(UuidInterface $userId, int $rootItemId): array
