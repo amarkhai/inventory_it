@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Application\Actions\Auth\Token\AccessTokenByPasswordAction;
 use App\Application\Actions\Item\ListItemsAction;
+use App\Application\Actions\Item\ViewItemAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use App\Application\Middleware\CheckJWTTokenMiddleware;
@@ -34,5 +35,6 @@ return function (App $app) {
 
     $app->group('/items', function (Group $group) {
         $group->get('', ListItemsAction::class);
+        $group->get('/{id}', ViewItemAction::class);
     })->add(CheckJWTTokenMiddleware::class);
 };

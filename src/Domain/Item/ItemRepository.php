@@ -17,7 +17,7 @@ interface ItemRepository
      * @param int|null $rootItemId
      * @return Item[]
      */
-    public function findAllForUser(UuidInterface $userId, ?int $rootItemId): array;
+    public function findAllForUser(UuidInterface $userId, ?int $rootItemId = null): array;
 
     /**
      * @param UuidInterface $userId

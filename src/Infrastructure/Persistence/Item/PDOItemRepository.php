@@ -2,12 +2,16 @@
 
 namespace App\Infrastructure\Persistence\Item;
 
+use App\Domain\DomainException\DomainRecordNotFoundException;
 use App\Domain\Item\Item;
 use App\Domain\Item\ItemIdMapping;
+use App\Domain\Item\ItemNotFoundException;
 use App\Domain\Item\ItemRepository;
 use App\Domain\Item\ItemStatus;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use Ramsey\Uuid\UuidInterface;
+use Slim\Exception\HttpBadRequestException;
+use Slim\Exception\HttpNotFoundException;
 
 readonly class PDOItemRepository implements ItemRepository
 {
@@ -28,8 +32,8 @@ readonly class PDOItemRepository implements ItemRepository
         /**
      * @inheritDoc
      */
-    public function findAllForUser(UuidInterface $userId, ?int $rootItemId): array
-    { //@todo проверить
+    public function findAllForUser(UuidInterface $userId, ?int $rootItemId = null): array
+    {
         return ($rootItemId) ? $this->findSubtree($userId, $rootItemId) : $this->findAllAvailable($userId);
     }
 
@@ -37,13 +41,17 @@ readonly class PDOItemRepository implements ItemRepository
      * @inheritDoc
      */
     public function findOneForUserById(UuidInterface $userId, int $itemId): Item
-    {//@todo проверить
+    {
         $stmt = $this->connection
             ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND id=:id');
         $stmt->bindValue(':owner_id', $userId);
         $stmt->bindValue(':id', $itemId);
         $stmt->execute();
-        return $stmt->fetchObject(Item::class);
+        $row = $stmt->fetch();
+        if (empty($row)) {
+            throw new ItemNotFoundException();
+        }
+        return self::rowToObject($row);
     }
 
     /**
@@ -61,7 +69,7 @@ readonly class PDOItemRepository implements ItemRepository
      * @inheritDoc
      */
     public function insert(Item $item): ItemIdMapping
-    {
+    {//@todo проверить
         $parentPath = $item->getParentPath();
         $parentPath = $parentPath ? $parentPath . '.' : '';
 
@@ -81,17 +89,17 @@ readonly class PDOItemRepository implements ItemRepository
     }
 
     private function findSubtree(UuidInterface $userId, int $rootItemId): array
-    {//@todo проверить
+    {
         $stmt = $this->connection
-            ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND path ~ \'*.:root_id.*\'');
-        $stmt->bindValue(':root_id', $rootItemId);
+            ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND path <@ :root_item_id');
+        $stmt->bindValue(':root_item_id', $rootItemId);
         $stmt->bindValue(':owner_id', $userId);
         $stmt->execute();
         return array_map(self::class . '::rowToObject', $stmt->fetchAll());
     }
 
     private function findAllAvailable(UuidInterface $userId): array
-    {//@todo проверить
+    {
         $stmt = $this->connection->prepare('SELECT * FROM items WHERE owner_id=:owner_id');
         $stmt->bindValue(':owner_id', $userId);
         $stmt->execute();

@@ -13,7 +13,7 @@ paths:
       summary: Получение items, доступных пользователю
       description: Получение в виде списка, деревья формируются на клиенте
       parameters:
-        - name: rootId
+        - name: rootItemId
           in: query
           description: Если указан, то отдаем только его и дочерние элементы
           required: false
@@ -58,28 +58,6 @@ paths:
         '403':
           description: Нет прав
 
-    put:
-      tags:
-        - items
-      summary: Изменение item
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PutItems_Item'
-      responses:
-        '200':
-          description: Возвращаем true в случае успеха
-          content:
-            application/json:
-              schema:
-                type: boolean
-        '400':
-          description: Неправильный запрос / ошибки валидации
-        '401':
-          description: Не авторизован
-        '403':
-          description: Нет прав
 
   /items/{itemId}:
     get:
@@ -101,6 +79,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetItems_Item'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+    put:
+      tags:
+        - items
+      summary: Изменение item
+      parameters:
+        - name: itemId
+          in: path
+          description: ID of item
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutItems_Item'
+      responses:
+        '200':
+          description: Возвращаем true в случае успеха
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Неправильный запрос / ошибки валидации
         '401':
           description: Не авторизован
         '403':

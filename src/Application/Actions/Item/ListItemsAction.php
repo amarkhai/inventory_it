@@ -13,7 +13,14 @@ class ListItemsAction extends ItemAction
      */
     protected function action(): Response
     {
-        $items = $this->itemRepository->findAll();
+        $userId = $this->request->getAttribute('userUuid');
+
+        $requestBody = $this->request->getParsedBody();
+
+        $rootItemId = (isset($requestBody['rootItemId']))
+            ? intval($requestBody['rootItemId']) : null;
+
+        $items = $this->itemRepository->findAllForUser($userId, $rootItemId);
 
         $this->logger->info("Items list was viewed.");
 
