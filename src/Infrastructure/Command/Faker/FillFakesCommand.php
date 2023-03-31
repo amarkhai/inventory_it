@@ -2,13 +2,18 @@
 
 namespace App\Infrastructure\Command\Faker;
 
-use App\Domain\Item\Item;
-use App\Domain\Item\ItemRepository;
-use App\Domain\Item\ItemStatus;
-use App\Domain\User\User;
-use App\Domain\User\UserRepository;
+use App\Domain\Entity\Item\Item;
+use App\Domain\Entity\Item\ItemRepository;
+use App\Domain\Entity\User\User;
+use App\Domain\Entity\User\UserRepository;
+use App\Domain\ValueObject\Item\DescriptionValue;
+use App\Domain\ValueObject\Item\ItemStatusEnum;
+use App\Domain\ValueObject\Item\NameValue;
+use App\Domain\ValueObject\Item\OwnerIdValue;
+use App\Domain\ValueObject\Item\StatusValue;
 use Faker\Factory;
 use Faker\Generator;
+use Ramsey\Uuid\Rfc4122\UuidV4;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -86,7 +91,10 @@ class FillFakesCommand extends Command
             $parentPath = $rootItem->getPath();
             $curDeepness = rand(0, $maxDeepness - 1);
             for ($j = 0; $j < $curDeepness; $j++) {
-                $newItem = $this->createItem($rootItem->getOwnerId(), $parentPath);
+                $newItem = $this->createItem(
+                    $rootItem->getOwnerId()->getValue(),
+                    $parentPath->getValue()
+                );
                 $parentPath = $newItem->getPath();
                 $createdItems[] = $newItem;
             }
@@ -95,7 +103,10 @@ class FillFakesCommand extends Command
         $prevItems = $createdItems;
         while (count($createdItems) < $itemsNumber) {
             $parent = $prevItems[rand(0, count($prevItems) - 1)];
-            $newItem = $this->createItem($parent->getOwnerId(), $parent->getPath());
+            $newItem = $this->createItem(
+                $parent->getOwnerId()->getValue(),
+                $parent->getPath()->getValue()
+            );
             $createdItems[] = $newItem;
         }
 
@@ -104,31 +115,29 @@ class FillFakesCommand extends Command
 
     private function createItem(UuidInterface $ownerId, string $parentPath = null): Item
     {
-        $item = new Item(
-            null,
-            Uuid::uuid4(),
-            null,
-            $parentPath,
-            ItemStatus::active,
-            $ownerId,
-            $this->faker->name,
-            $this->faker->text(100)
+        $item = new Item();
+        $item->setName(new NameValue($this->faker->name));
+        $item->setStatus(new StatusValue(ItemStatusEnum::active));
+        $item->setDescription(new DescriptionValue($this->faker->text));
+        $item->setOwnerId(new OwnerIdValue($ownerId));
+
+        $itemMap = $this->itemRepository->insert(
+            $item,
+            UuidV4::uuid4()->toString(),
+            $parentPath
         );
-        $idMapping = $this->itemRepository->insert($item);
 
-        if (\is_null($idMapping->path)) {
-            throw new \RuntimeException('Path не может быть null!');
-        }
+        $item->setPath($itemMap->getPath());
 
-        $item->setPath($idMapping->path);
         return $item;
     }
 
     private function createUsers(int $usersNumber): array
     {
-        $userIds = array_map(function ($item): UuidInterface {
-            return Uuid::uuid4();
-        }, array_fill(0, $usersNumber, null));
+        $userIds = array_map(
+            fn($_): UuidInterface => Uuid::uuid4(),
+            array_fill(0, $usersNumber, null)
+        );
 
         $res = [];
         foreach ($userIds as $userId) {

@@ -73,13 +73,22 @@ abstract class Action
         return $this->respond($payload);
     }
 
+
+    protected function responseWithViolations(array $violations, int $statusCode = 400): Response
+    {
+        $payload = new ActionPayload($statusCode, ['violations' => $violations]);
+
+        return $this->respond($payload);
+    }
+
     /**
      * @throws \JsonException
      */
     protected function respond(ActionPayload $payload): Response
     {
-        $json = json_encode($payload, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        $json = json_encode($payload, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         /** @psalm-suppress PossiblyFalseArgument $json не может быть false из-за флага JSON_THROW_ON_ERROR */
+
         $this->response->getBody()->write($json);
 
         return $this->response

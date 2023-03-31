@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Item;
+namespace App\Domain\Entity\Item;
 
 use Ramsey\Uuid\UuidInterface;
 
@@ -36,9 +36,15 @@ interface ItemRepository
 
     /**
      * @param Item $item
-     * @return ItemIdMapping
+     * @param string $temporaryId
+     * @param string|null $parentPath
+     * @return JustCreatedItemMap
      */
-    public function insert(Item $item): ItemIdMapping;
+    public function insert(
+        Item $item,
+        string $temporaryId,
+        ?string $parentPath
+    ): JustCreatedItemMap;
 
     /**
      * @param Item $item

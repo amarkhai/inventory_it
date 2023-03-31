@@ -37,7 +37,7 @@ paths:
       tags:
         - items
       summary: Добавление новой item
-      description: Используются временные t_id и t_path, сгенерированные на клиенте, которые потом на сервере заменяются на постоянные
+      description: Используются временный temporary_id , сгенерированный на клиенте, который потом на сервере заменяется на постоянный
       requestBody:
         content:
           application/json:
@@ -46,7 +46,7 @@ paths:
         required: true
       responses:
         '200':
-          description: Объект с id и t_id
+          description: Объект с id, temporary_id и path
           content:
             application/json:
               schema:
@@ -228,7 +228,7 @@ components:
         description:
           type: string
           example: стеллаж
-        t_path:
+        parent_path:
           type: string
           example: 'abcdefds.fdsvfd.svdfv'
         rights:
@@ -354,12 +354,15 @@ components:
     PermanentID:
       type: object
       properties:
-        t_id:
+        temporary_id:
           type: string
           example: 'sdfsd'
         id:
           type: integer
           example: 10
+        path:
+          type: string
+          example: 'sdfsd.sdf.gfd'
 
     User:
       type: object
