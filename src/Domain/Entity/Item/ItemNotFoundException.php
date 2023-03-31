@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Item;
+namespace App\Domain\Entity\Item;
 
 use App\Domain\DomainException\DomainRecordNotFoundException;
 

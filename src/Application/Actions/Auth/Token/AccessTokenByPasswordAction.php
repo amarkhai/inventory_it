@@ -6,7 +6,7 @@ namespace App\Application\Actions\Auth\Token;
 
 use App\Application\Actions\Action;
 use App\Application\UseCase\Auth\JWTTokenCreator;
-use App\Domain\User\UserRepository;
+use App\Domain\Entity\User\UserRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;

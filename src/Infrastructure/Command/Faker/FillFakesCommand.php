@@ -2,11 +2,11 @@
 
 namespace App\Infrastructure\Command\Faker;
 
-use App\Domain\Item\Item;
-use App\Domain\Item\ItemRepository;
-use App\Domain\Item\ItemStatus;
-use App\Domain\User\User;
-use App\Domain\User\UserRepository;
+use App\Domain\Entity\Item\Item;
+use App\Domain\Entity\Item\ItemRepository;
+use App\Domain\Entity\User\User;
+use App\Domain\Entity\User\UserRepository;
+use App\Domain\ValueObject\Item\ItemStatusEnum;
 use Faker\Factory;
 use Faker\Generator;
 use Ramsey\Uuid\Uuid;
@@ -109,7 +109,7 @@ class FillFakesCommand extends Command
             Uuid::uuid4(),
             null,
             $parentPath,
-            ItemStatus::active,
+            ItemStatusEnum::active,
             $ownerId,
             $this->faker->name,
             $this->faker->text(100)

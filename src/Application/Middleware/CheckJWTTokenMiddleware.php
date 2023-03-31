@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace App\Application\Middleware;
 
-use App\Domain\User\UserNotFoundException;
-use App\Domain\User\UserRepository;
-use Lcobucci\JWT\Encoding\JoseEncoder;
+use App\Domain\Entity\User\UserNotFoundException;
+use App\Domain\Entity\User\UserRepository;
+use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Validation\Constraint\RelatedTo;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validator;
-use Lcobucci\JWT\Parser;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 class CheckJWTTokenMiddleware implements MiddlewareInterface

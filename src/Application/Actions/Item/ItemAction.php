@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Application\Actions\Item;
 
 use App\Application\Actions\Action;
-use App\Domain\Item\ItemRepository;
+use App\Application\DTO\RequestValidator;
 use Psr\Log\LoggerInterface;
 
 abstract class ItemAction extends Action
 {
-    protected ItemRepository $itemRepository;
+    protected RequestValidator $validator;
 
-    public function __construct(LoggerInterface $logger, ItemRepository $itemRepository)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        RequestValidator $validator
+    ) {
         parent::__construct($logger);
-        $this->itemRepository = $itemRepository;
+        $this->validator = $validator;
     }
 }

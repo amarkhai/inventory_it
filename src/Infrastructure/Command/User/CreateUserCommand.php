@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Command\User;
 
-use App\Domain\User\User;
-use App\Domain\User\UserRepository;
+use App\Domain\Entity\User\User;
+use App\Domain\Entity\User\UserRepository;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

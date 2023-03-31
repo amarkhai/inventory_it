@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Domain\Item;
+namespace App\Domain\ValueObject\Item;
 
-enum ItemStatus: string
+enum ItemStatusEnum: string
 {
     case active = "active";
     case deleted = "deleted";
 
-    public function status(): string
+    public function getValue(): string
     {
         return $this->value;
     }

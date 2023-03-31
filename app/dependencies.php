@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Application\DTO\RequestValidator;
 use App\Application\Middleware\CheckJWTTokenMiddleware;
 use App\Application\Settings\SettingsInterface;
 use App\Application\UseCase\Auth\JWTTokenCreator;
-use App\Domain\User\UserRepository;
+use App\Domain\Entity\User\UserRepository;
 use DI\ContainerBuilder;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -17,6 +18,8 @@ use Monolog\Processor\UidProcessor;
 use Psr\Clock\ClockInterface as Clock;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -33,6 +36,14 @@ return function (ContainerBuilder $containerBuilder) {
             $logger->pushHandler($handler);
 
             return $logger;
+        },
+        ValidatorInterface::class =>
+            Validation::createValidatorBuilder()
+                ->enableAnnotationMapping()
+                ->getValidator(),
+        RequestValidator::class => function (ContainerInterface $c) {
+            $validator = $c->get(ValidatorInterface::class);
+            return new RequestValidator($validator);
         },
         \PDO::class => function (ContainerInterface $c) {
             $settings = $c->get(SettingsInterface::class);
