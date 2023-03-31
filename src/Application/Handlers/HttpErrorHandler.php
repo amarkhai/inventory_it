@@ -55,13 +55,14 @@ class HttpErrorHandler extends SlimErrorHandler
             && $exception instanceof Throwable
             && $this->displayErrorDetails
         ) {
-            $error->setDescription($exception->getTraceAsString().$exception->getMessage());
+            $error->setDescription($exception->getMessage());
         }
 
         $payload = new ActionPayload($statusCode, null, $error);
-        $encodedPayload = json_encode($payload, JSON_PRETTY_PRINT);
+        $encodedPayload = json_encode($payload, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 
         $response = $this->responseFactory->createResponse($statusCode);
+        /** @psalm-suppress PossiblyFalseArgument $encodedPayload не может быть false из-за флага JSON_THROW_ON_ERROR */
         $response->getBody()->write($encodedPayload);
 
         return $response->withHeader('Content-Type', 'application/json');

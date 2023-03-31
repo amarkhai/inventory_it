@@ -12,7 +12,7 @@ use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\ItemRepository;
 use Ramsey\Uuid\UuidInterface;
 
-readonly class PDOItemRepository implements ItemRepository
+class PDOItemRepository implements ItemRepository
 {
     public function __construct(
         private \PDO $connection
@@ -90,6 +90,10 @@ readonly class PDOItemRepository implements ItemRepository
 
         $row = $stmt->fetch();
 
+        if ($row === false) {
+            throw new \RuntimeException('Не удалось создать объект ItemIdMapping для Item с id=' . $item->getId());
+        }
+
         $row['temporary_id'] = $temporaryId;
         return (new CreatedItemMapDataMapper())->map($row);
     }
@@ -114,21 +118,22 @@ readonly class PDOItemRepository implements ItemRepository
 
     public function update(Item $item): bool
     {
-//@todo проверить
-        $stmt = $this->connection->prepare('
-            UPDATE public.items SET 
-                name=:name, 
-                description=:description, 
-                path=:path, 
-                status=:status
-            WHERE id=:id
-        ');
-        $stmt->bindValue(':id', $item->getId());
-        $stmt->bindValue(':name', $item->getName());
-        $stmt->bindValue(':description', $item->getDescription());
-        $stmt->bindValue(':path', $item->getPath());
-        $stmt->bindValue(':status', $item->getStatus());
-        $stmt->execute();
-        return $stmt->fetchObject(JustCreatedItemMap::class, ['t_id' => $item->getT_id()]);
+        //@todo implement
+        return false;
+//        $stmt = $this->connection->prepare('
+//            UPDATE public.items SET
+//                name=:name,
+//                description=:description,
+//                path=:path,
+//                status=:status
+//            WHERE id=:id
+//        ');
+//        $stmt->bindValue(':id', $item->getId());
+//        $stmt->bindValue(':name', $item->getName());
+//        $stmt->bindValue(':description', $item->getDescription());
+//        $stmt->bindValue(':path', $item->getPath());
+//        $stmt->bindValue(':status', $item->getStatus());
+//        $stmt->execute();
+//        return $stmt->fetchObject(JustCreatedItemMap::class, ['t_id' => $item->getT_id()]);
     }
 }

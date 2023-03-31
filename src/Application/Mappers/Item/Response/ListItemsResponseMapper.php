@@ -27,7 +27,7 @@ class ListItemsResponseMapper implements MapperInterface
     {
         return array_map(function ($item) {
             return new ListItemResponseDTO(
-                $item->getId()->getValue(),
+                (int) $item->getId()->getValue(),
                 $item->getName()->getValue(),
                 $item->getPath()->getValue(),
             );

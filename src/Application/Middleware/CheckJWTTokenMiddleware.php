@@ -9,6 +9,9 @@ use App\Domain\Entity\User\UserRepository;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key\InMemory;
+
+
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validator;
@@ -21,6 +24,9 @@ use Ramsey\Uuid\Uuid;
 
 class CheckJWTTokenMiddleware implements MiddlewareInterface
 {
+    /**
+     * @param non-empty-string $secret
+     */
     public function __construct(
         private readonly string $secret,
         private readonly Parser $parser,
@@ -47,7 +53,11 @@ class CheckJWTTokenMiddleware implements MiddlewareInterface
             throw new \RuntimeException('Incorrect header');
         }
         $token = $matches[1];
+        if ($token === '') {
+            throw new \RuntimeException('Incorrect header');
+        }
 
+        /** @var UnencryptedToken $parsedToken */
         $parsedToken = $this->parser->parse($token);
 
         $signingKey = InMemory::plainText($this->secret);

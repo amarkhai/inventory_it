@@ -12,7 +12,7 @@ class ViewItemRequestDTO extends AuthenticatedRequestDTO
 {
     #[Assert\NotBlank]
     #[Assert\Type("int")]
-    private ?int $itemId = null;
+    private int $itemId;
 
     /**
      * @param Request $request
@@ -20,10 +20,7 @@ class ViewItemRequestDTO extends AuthenticatedRequestDTO
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $itemId = $this->getRouteParam('id');
-        if (is_numeric($itemId)) {
-            $this->itemId = (int) $itemId;
-        }
+        $this->itemId = (int) $this->getRouteParam('id');
     }
 
     /**

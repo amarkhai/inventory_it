@@ -34,8 +34,8 @@ class CreateItemRequestDTO extends AuthenticatedRequestDTO
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->temporary_id = $this->getBodyParam('temporary_id');
-        $this->name = $this->getBodyParam('name');
+        $this->temporary_id = $this->getBodyParam('temporary_id') ?? '';
+        $this->name = $this->getBodyParam('name') ?? '';
         $this->description = $this->getBodyParam('description');
         $this->parent_path = $this->getBodyParam('parent_path');
         $this->owner_id = (string) $this->request->getAttribute('userUuid');

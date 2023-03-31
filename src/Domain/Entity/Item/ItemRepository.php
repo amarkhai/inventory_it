@@ -51,5 +51,4 @@ interface ItemRepository
      * @return bool
      */
     public function update(Item $item): bool;
-
 }

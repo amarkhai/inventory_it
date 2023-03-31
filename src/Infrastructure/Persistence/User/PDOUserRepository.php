@@ -14,7 +14,6 @@ class PDOUserRepository implements UserRepository
 {
     public function __construct(private readonly \PDO $connection)
     {
-
     }
 
     /**
@@ -22,14 +21,24 @@ class PDOUserRepository implements UserRepository
      */
     public function findAll(): array
     {
-        $users = $this->connection->query('SELECT * FROM users;')->fetchAll(\PDO::FETCH_ASSOC);
+        $query = $this->connection->query('SELECT * FROM users;');
+
+        if ($query === false) {
+            throw new \RuntimeException('Не удалось получить список из всех пользователей');
+        }
+
+        $users = $query->fetchAll(\PDO::FETCH_ASSOC);
 
         return array_map(function (array $item) {
+            $createdAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', $item['created_at']);
+            if ($createdAt === false) {
+                throw new \RuntimeException('Некорректный created_at у пользователя ' . $item['id']);
+            }
             $user = new User(
                 Uuid::fromString($item['id']),
                 $item['username'],
                 $item['password'],
-                \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', $item['created_at'])
+                $createdAt
             );
             $user->updateFirstName($item['first_name']);
             $user->updateLastName($item['last_name']);
@@ -51,14 +60,19 @@ class PDOUserRepository implements UserRepository
             throw new UserNotFoundException('Пользователь не найден');
         }
 
+        $createdAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', (string)$userData['created_at']);
+        if ($createdAt === false) {
+            throw new \RuntimeException('Некорректный created_at у пользователя ' . $userData['id']);
+        }
+
         $user = new User(
-            Uuid::fromString($userData['id']),
-            $userData['username'],
-            $userData['password'],
-            \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', $userData['created_at'])
+            Uuid::fromString((string)$userData['id']),
+            (string)$userData['username'],
+            (string)$userData['password'],
+            $createdAt
         );
-        $user->updateFirstName($userData['first_name']);
-        $user->updateLastName($userData['last_name']);
+        $user->updateFirstName((string)$userData['first_name']);
+        $user->updateLastName((string)$userData['last_name']);
 
         return $user;
     }
