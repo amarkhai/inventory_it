@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class ListItemsRequestDTO extends AuthenticatedRequestDTO
 {
-
     #[Assert\Type("int")]
     private ?int $rootItemId = null;
 

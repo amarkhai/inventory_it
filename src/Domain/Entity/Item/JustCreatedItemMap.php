@@ -2,11 +2,9 @@
 
 namespace App\Domain\Entity\Item;
 
-use App\Domain\ValueObject\Item\IdValue;
 use App\Domain\ValueObject\Item\JustCreatedIdValue;
 use App\Domain\ValueObject\Item\PathValue;
 use App\Domain\ValueObject\Item\TemporaryIdValue;
-use Ramsey\Uuid\UuidInterface;
 
 /**
  *  Соответствие временного $t_id, сгенерированного на клиенте постоянному $id,
@@ -65,5 +63,4 @@ class JustCreatedItemMap
     {
         $this->path = $path;
     }
-
 }
