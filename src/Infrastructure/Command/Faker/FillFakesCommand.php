@@ -115,13 +115,18 @@ class FillFakesCommand extends Command
             $this->faker->text(100)
         );
         $idMapping = $this->itemRepository->insert($item);
+
+        if (\is_null($idMapping->path)) {
+            throw new \RuntimeException('Path не может быть null!');
+        }
+
         $item->setPath($idMapping->path);
         return $item;
     }
 
     private function createUsers(int $usersNumber): array
     {
-        $userIds = array_map(function (): UuidInterface {
+        $userIds = array_map(function ($item): UuidInterface {
             return Uuid::uuid4();
         }, array_fill(0, $usersNumber, null));
 

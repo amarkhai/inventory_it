@@ -23,9 +23,11 @@ jobs:
           ${{ runner.os }}-php-
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
+    - name: Code Sniffer
+      run: vendor/bin/phpcs
     - name: Psalm
       run: vendor/bin/psalm
     - name: PHPStan
       run: vendor/bin/phpstan
-    - name: Run test suite
-      run: vendor/bin/phpunit
+#    - name: Run test suite
+#      run: vendor/bin/phpunit

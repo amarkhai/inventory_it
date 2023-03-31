@@ -51,10 +51,7 @@ class Item implements JsonSerializable
         $this->description = $description;
     }
 
-    /**
-     * @return int
-     */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -164,7 +161,7 @@ class Item implements JsonSerializable
     /**
      * @return UuidInterface|null
      */
-    public function getT_id(): ?UuidInterface
+    public function getTid(): ?UuidInterface
     {
         return $this->t_id;
     }
@@ -172,7 +169,7 @@ class Item implements JsonSerializable
     /**
      * @param UuidInterface|null $t_id
      */
-    public function setT_id(?UuidInterface $t_id): void
+    public function setTid(?UuidInterface $t_id): void
     {
         $this->t_id = $t_id;
     }
