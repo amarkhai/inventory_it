@@ -29,6 +29,7 @@ class ListItemsResponseMapper implements MapperInterface
             return new ListItemResponseDTO(
                 (int) $item->getId()->getValue(),
                 $item->getName()->getValue(),
+                $item->getDescription()->getValue(),
                 $item->getPath()->getValue(),
             );
         }, $this->items);

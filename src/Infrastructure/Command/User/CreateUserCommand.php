@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Command\User;
 
 use App\Domain\Entity\User\User;
-use App\Domain\Entity\User\UserRepository;
+use App\Domain\Repository\UserRepositoryInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,7 +18,7 @@ class CreateUserCommand extends Command
 {
     protected static $defaultDescription = 'Creates a new user.';
 
-    public function __construct(private readonly UserRepository $userRepository)
+    public function __construct(private readonly UserRepositoryInterface $userRepository)
     {
         parent::__construct();
     }

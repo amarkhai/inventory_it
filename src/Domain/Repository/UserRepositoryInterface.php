@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Entity\User;
+namespace App\Domain\Repository;
 
+use App\Domain\Entity\User\User;
+use App\Domain\Entity\User\UserNotFoundException;
 use Ramsey\Uuid\UuidInterface;
 
-interface UserRepository
+interface UserRepositoryInterface
 {
     /**
      * @return User[]

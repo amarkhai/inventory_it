@@ -5,36 +5,31 @@ namespace App\Application\UseCase\Item;
 use App\Application\DTO\Request\Item\ViewItemRequestDTO;
 use App\Application\DTO\Response\Item\ViewItemResponseDTO;
 use App\Application\Mappers\Item\Response\ViewItemResponseMapper;
-use App\Domain\Entity\Item\ItemRepository;
+use App\Application\UseCase\ActionUseCaseInterface;
+use App\Domain\Entity\Item\ItemNotFoundException;
+use App\Domain\Interactor\ItemInteractor;
 
-class ViewItemUseCase extends ItemUseCase
+class ViewItemUseCase implements ActionUseCaseInterface
 {
-    private ViewItemResponseMapper $mapper;
-
-    /**
-     * @param ItemRepository $itemRepository
-     * @param ViewItemResponseMapper $mapper
-     */
     public function __construct(
-        ItemRepository $itemRepository,
-        ViewItemResponseMapper $mapper
+        private readonly ViewItemResponseMapper $responseMapper,
+        private readonly ItemInteractor $interactor
     ) {
-        parent::__construct($itemRepository);
-        $this->mapper = $mapper;
     }
 
     /**
      * @param ViewItemRequestDTO $dto
      * @return ViewItemResponseDTO
+     * @throws ItemNotFoundException
      */
     public function __invoke(ViewItemRequestDTO $dto): ViewItemResponseDTO
     {
-        $item = $this->itemRepository->findOneForUserById(
+        $item = $this->interactor->getOne(
             $dto->getUserId(),
             $dto->getItemId()
         );
 
-        $this->mapper->setItem($item);
-        return $this->mapper->map();
+        $this->responseMapper->setItem($item);
+        return $this->responseMapper->map();
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Actions;
 
+use App\Application\DTO\Request\RequestDTO;
+use App\Application\DTO\RequestValidator;
 use App\Domain\DomainException\DomainRecordNotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -13,17 +15,16 @@ use Slim\Exception\HttpNotFoundException;
 
 abstract class Action
 {
-    protected LoggerInterface $logger;
-
     protected Request $request;
 
     protected Response $response;
 
     protected array $args;
 
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected RequestValidator $requestValidator,
+    ) {
     }
 
     /**
@@ -74,7 +75,7 @@ abstract class Action
     }
 
 
-    protected function responseWithViolations(array $violations, int $statusCode = 400): Response
+    protected function respondWithViolations(array $violations, int $statusCode = 400): Response
     {
         $payload = new ActionPayload($statusCode, ['violations' => $violations]);
 
@@ -94,5 +95,10 @@ abstract class Action
         return $this->response
                     ->withHeader('Content-Type', 'application/json')
                     ->withStatus($payload->getStatusCode());
+    }
+
+    protected function validateRequestDTO(RequestDTO $requestDTO): array
+    {
+        return $this->requestValidator->validate($requestDTO);
     }
 }

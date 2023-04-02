@@ -9,21 +9,25 @@ use App\Application\DTO\Response\ResponseDTO;
 class ListItemResponseDTO extends ResponseDTO
 {
     private int $id;
-    private string $name;
-    private string $path;
+    private ?string $name;
+    private ?string $description;
+    private ?string $path;
 
     /**
      * @param int $id
-     * @param string $name
-     * @param string $path
+     * @param string|null $name
+     * @param string|null $description
+     * @param string|null $path
      */
     public function __construct(
         int $id,
-        string $name,
-        string $path,
+        ?string $name,
+        ?string $description,
+        ?string $path,
     ) {
         $this->id = $id;
         $this->name = $name;
+        $this->description = $description;
         $this->path = $path;
     }
 
@@ -36,28 +40,36 @@ class ListItemResponseDTO extends ResponseDTO
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath(): string
+    public function getPath(): ?string
     {
         return $this->path;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'path' => $this->getPath()
+            'description' => $this->getDescription(),
+            'path' => $this->getPath(),
         ];
     }
 }

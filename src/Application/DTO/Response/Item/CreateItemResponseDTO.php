@@ -11,7 +11,7 @@ class CreateItemResponseDTO extends ResponseDTO
     public function __construct(
         private readonly int $id,
         private readonly string $temporary_id,
-        private readonly string $path
+        private readonly ?string $path
     ) {
     }
 
@@ -32,9 +32,9 @@ class CreateItemResponseDTO extends ResponseDTO
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath(): string
+    public function getPath(): ?string
     {
         return $this->path;
     }

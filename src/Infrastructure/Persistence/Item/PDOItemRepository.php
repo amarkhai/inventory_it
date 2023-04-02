@@ -7,12 +7,12 @@ namespace App\Infrastructure\Persistence\Item;
 use App\Domain\DataMapper\Item\CreatedItemMapDataMapper;
 use App\Domain\DataMapper\Item\ItemDataMapper;
 use App\Domain\Entity\Item\Item;
-use App\Domain\Entity\Item\JustCreatedItemMap;
 use App\Domain\Entity\Item\ItemNotFoundException;
-use App\Domain\Entity\Item\ItemRepository;
+use App\Domain\Entity\Item\JustCreatedItemMap;
+use App\Domain\Repository\ItemRepositoryInterface;
 use Ramsey\Uuid\UuidInterface;
 
-class PDOItemRepository implements ItemRepository
+class PDOItemRepository implements ItemRepositoryInterface
 {
     public function __construct(
         private \PDO $connection
@@ -118,22 +118,20 @@ class PDOItemRepository implements ItemRepository
 
     public function update(Item $item): bool
     {
-        //@todo implement
-        return false;
-//        $stmt = $this->connection->prepare('
-//            UPDATE public.items SET
-//                name=:name,
-//                description=:description,
-//                path=:path,
-//                status=:status
-//            WHERE id=:id
-//        ');
-//        $stmt->bindValue(':id', $item->getId());
-//        $stmt->bindValue(':name', $item->getName());
-//        $stmt->bindValue(':description', $item->getDescription());
-//        $stmt->bindValue(':path', $item->getPath());
-//        $stmt->bindValue(':status', $item->getStatus());
-//        $stmt->execute();
-//        return $stmt->fetchObject(JustCreatedItemMap::class, ['t_id' => $item->getT_id()]);
+        //@todo сделать обновление конкретных полей, чтобы не переписывалась вся сущность
+        $stmt = $this->connection->prepare('
+            UPDATE public.items SET
+                name=:name,
+                description=:description,
+                status=:status,
+                path=(:path)::ltree
+            WHERE id=:id
+        ');
+        $stmt->bindValue(':id', $item->getId());
+        $stmt->bindValue(':name', $item->getName());
+        $stmt->bindValue(':description', $item->getDescription());
+        $stmt->bindValue(':path', $item->getPath()->getValue());
+        $stmt->bindValue(':status', $item->getStatus());
+        return $stmt->execute();
     }
 }

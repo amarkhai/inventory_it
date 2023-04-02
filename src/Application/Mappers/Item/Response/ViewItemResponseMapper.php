@@ -29,6 +29,8 @@ class ViewItemResponseMapper implements MapperInterface
         return new ViewItemResponseDTO(
             (int) $this->item->getId()->getValue(),
             $this->item->getName()->getValue(),
+            $this->item->getDescription()->getValue(),
+            $this->item->getPath()->getValue(),
         );
     }
 }

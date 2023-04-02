@@ -5,25 +5,22 @@ declare(strict_types=1);
 namespace App\Application\Actions\Auth\Token;
 
 use App\Application\Actions\Action;
+use App\Application\DTO\RequestValidator;
 use App\Application\UseCase\Auth\JWTTokenCreator;
-use App\Domain\Entity\User\UserRepository;
+use App\Domain\Repository\UserRepositoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 class AccessTokenByPasswordAction extends Action
 {
-    private readonly UserRepository $userRepository;
-    private JWTTokenCreator $JWTTokenCreator;
-
     public function __construct(
-        LoggerInterface $logger,
-        UserRepository $userRepository,
-        JWTTokenCreator $JWTTokenCreator
+        protected LoggerInterface $logger,
+        protected RequestValidator $requestValidator,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly JWTTokenCreator $JWTTokenCreator
     ) {
-        parent::__construct($logger);
-        $this->userRepository = $userRepository;
-        $this->JWTTokenCreator = $JWTTokenCreator;
+        parent::__construct($logger, $requestValidator);
     }
     protected function action(): Response
     {

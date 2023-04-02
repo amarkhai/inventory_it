@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\Item;
 
+use App\Application\Actions\Action;
 use App\Application\DTO\Request\Item\CreateItemRequestDTO;
 use App\Application\DTO\RequestValidator;
 use App\Application\UseCase\Item\CreateItemUseCase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 
-class CreateItemAction extends ItemAction
+class CreateItemAction extends Action
 {
     private CreateItemUseCase $useCase;
 
@@ -30,18 +31,13 @@ class CreateItemAction extends ItemAction
     protected function action(): Response
     {
         $dto = new CreateItemRequestDTO($this->request);
-        $violations = $this->validator->validate($dto);
 
+        $violations = $this->validateRequestDTO($dto);
         if (!empty($violations)) {
-            return $this->responseWithViolations($violations);
+            return $this->respondWithViolations($violations);
         }
 
         $item = ($this->useCase)($dto);
-
-//        $item = $this->itemRepository->findOneForUserById(
-//            $dto->getUserId(),
-//            $dto->getItemId()
-//        );
 
         $this->logger->info("Item of id `{$item->getId()}` was created.");
 

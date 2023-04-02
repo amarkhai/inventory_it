@@ -5,22 +5,15 @@ namespace App\Application\UseCase\Item;
 use App\Application\DTO\Request\Item\ListItemsRequestDTO;
 use App\Application\DTO\Response\Item\ListItemResponseDTO;
 use App\Application\Mappers\Item\Response\ListItemsResponseMapper;
-use App\Domain\Entity\Item\ItemRepository;
+use App\Application\UseCase\ActionUseCaseInterface;
+use App\Domain\Interactor\ItemInteractor;
 
-class ListItemsUseCase extends ItemUseCase
+class ListItemsUseCase implements ActionUseCaseInterface
 {
-    private ListItemsResponseMapper $mapper;
-
-    /**
-     * @param ItemRepository $itemRepository
-     * @param ListItemsResponseMapper $mapper
-     */
     public function __construct(
-        ItemRepository $itemRepository,
-        ListItemsResponseMapper $mapper
+        private readonly ListItemsResponseMapper $responseMapper,
+        private readonly ItemInteractor $interactor
     ) {
-        parent::__construct($itemRepository);
-        $this->mapper = $mapper;
     }
 
     /**
@@ -29,12 +22,12 @@ class ListItemsUseCase extends ItemUseCase
      */
     public function __invoke(ListItemsRequestDTO $dto): array
     {
-        $items = $this->itemRepository->findAllForUser(
+        $items = $this->interactor->list(
             $dto->getUserId(),
             $dto->getRootItemId()
         );
 
-        $this->mapper->setItems($items);
-        return $this->mapper->map();
+        $this->responseMapper->setItems($items);
+        return $this->responseMapper->map();
     }
 }
