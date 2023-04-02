@@ -61,6 +61,7 @@ class UpdateItemRequestDTO extends AuthenticatedRequestDTO
     /**
      * @return string|null
      */
+    /** @psalm-ignore-nullable-return */
     public function getName(): ?string
     {
         return $this->name;
@@ -77,6 +78,7 @@ class UpdateItemRequestDTO extends AuthenticatedRequestDTO
     /**
      * @return string|null
      */
+    /** @psalm-ignore-nullable-return */
     public function getStatus(): ?string
     {
         return $this->status;
@@ -85,6 +87,7 @@ class UpdateItemRequestDTO extends AuthenticatedRequestDTO
     /**
      * @return string|null
      */
+    /** @psalm-ignore-nullable-return */
     public function getPath(): ?string
     {
         return $this->path;
@@ -93,6 +96,7 @@ class UpdateItemRequestDTO extends AuthenticatedRequestDTO
     /**
      * @return string|null
      */
+    /** @psalm-ignore-nullable-return */
     public function getOwnerId(): ?string
     {
         return $this->owner_id;

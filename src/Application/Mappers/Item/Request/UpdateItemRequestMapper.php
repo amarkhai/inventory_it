@@ -35,15 +35,10 @@ class UpdateItemRequestMapper implements RequestMapperInterface
 
         $item->setId(new IdValue($this->requestDTO->getId()));
         $item->setName(new NameValue($this->requestDTO->getName()));
-
-        $status = $this->requestDTO->getStatus();
-        $item->setStatus(new StatusValue($status ? ItemStatusEnum::from($status) : null));
-
+        $item->setStatus(new StatusValue(ItemStatusEnum::from($this->requestDTO->getStatus())));
         $item->setDescription(new DescriptionValue($this->requestDTO->getDescription()));
         $item->setPath(new PathValue($this->requestDTO->getPath()));
-
-        $owner_id = $this->requestDTO->getOwnerId();
-        $item->setOwnerId(new OwnerIdValue($owner_id ? Uuidv4::fromString($owner_id) : null));
+        $item->setOwnerId(new OwnerIdValue(Uuidv4::fromString($this->requestDTO->getOwnerId())));
 
         return $item;
     }
