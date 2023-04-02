@@ -6,22 +6,17 @@ use App\Application\DTO\Request\Item\CreateItemRequestDTO;
 use App\Application\DTO\Response\Item\CreateItemResponseDTO;
 use App\Application\Mappers\Item\Request\CreateItemRequestMapper;
 use App\Application\Mappers\Item\Response\CreateItemResponseMapper;
-use App\Domain\Entity\Item\Item;
-use App\Domain\Entity\Item\ItemRepository;
+use App\Application\UseCase\ActionUseCaseInterface;
+use App\Domain\Interactor\ItemInteractor;
+use App\Domain\Interactor\Item\UpdateItemInteractor;
 
-class CreateItemUseCase extends ItemUseCase
+class CreateItemUseCase implements ActionUseCaseInterface
 {
-    private CreateItemResponseMapper $responseMapper;
-    private CreateItemRequestMapper $requestMapper;
-
     public function __construct(
-        ItemRepository $itemRepository,
-        CreateItemResponseMapper $responseMapper,
-        CreateItemRequestMapper $requestMapper,
+        private readonly CreateItemResponseMapper $responseMapper,
+        private readonly CreateItemRequestMapper $requestMapper,
+        private readonly ItemInteractor $interactor
     ) {
-        parent::__construct($itemRepository);
-        $this->responseMapper = $responseMapper;
-        $this->requestMapper = $requestMapper;
     }
 
     /**
@@ -33,7 +28,7 @@ class CreateItemUseCase extends ItemUseCase
         $this->requestMapper->setRequestDto($dto);
         $item = $this->requestMapper->map();
 
-        $itemMap = $this->itemRepository->insert(
+        $itemMap = $this->interactor->create(
             $item,
             $dto->getTemporaryId(),
             $dto->getParentPath()

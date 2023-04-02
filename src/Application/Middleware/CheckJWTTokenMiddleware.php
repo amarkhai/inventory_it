@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Middleware;
 
 use App\Domain\Entity\User\UserNotFoundException;
-use App\Domain\Entity\User\UserRepository;
+use App\Domain\Repository\UserRepositoryInterface;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -31,7 +31,7 @@ class CheckJWTTokenMiddleware implements MiddlewareInterface
         private readonly Signer $signer,
         private readonly Validator $validator,
         private readonly ClockInterface $clock,
-        private readonly UserRepository $userRepository
+        private readonly UserRepositoryInterface $userRepository
     ) {
     }
 

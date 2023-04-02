@@ -9,16 +9,26 @@ use App\Application\DTO\Response\ResponseDTO;
 class ViewItemResponseDTO extends ResponseDTO
 {
     private int $id;
-    private string $name;
+    private ?string $name;
+    private ?string $description;
+    private ?string $path;
 
     /**
      * @param int $id
-     * @param string $name
+     * @param string|null $name
+     * @param string|null $description
+     * @param string|null $path
      */
-    public function __construct(int $id, string $name)
-    {
+    public function __construct(
+        int $id,
+        ?string $name,
+        ?string $description,
+        ?string $path,
+    ) {
         $this->id = $id;
         $this->name = $name;
+        $this->description = $description;
+        $this->path = $path;
     }
 
     /**
@@ -30,18 +40,36 @@ class ViewItemResponseDTO extends ResponseDTO
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function jsonSerialize(): mixed
+    /**
+     * @return string|null
+     */
+    public function getPath(): ?string
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->getId(),
-            'name' => $this->getName()
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'path' => $this->getPath(),
         ];
     }
 }

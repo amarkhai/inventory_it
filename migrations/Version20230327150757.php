@@ -23,7 +23,7 @@ final class Version20230327150757 extends AbstractMigration
         $this->addSql('
             CREATE OR REPLACE FUNCTION update_children_items_path() RETURNS TRIGGER AS $update_children_items_path$
                 BEGIN
-                    IF (TG_OP = \'UPDATE\') THEN
+                    IF (TG_OP = \'UPDATE\' AND NEW.path != OLD.path) THEN
                         UPDATE items
                         SET path = NEW.path || subpath(path, nlevel(OLD.path))
                         WHERE path <@ OLD.path;

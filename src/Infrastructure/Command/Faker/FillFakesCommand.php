@@ -3,9 +3,9 @@
 namespace App\Infrastructure\Command\Faker;
 
 use App\Domain\Entity\Item\Item;
-use App\Domain\Entity\Item\ItemRepository;
 use App\Domain\Entity\User\User;
-use App\Domain\Entity\User\UserRepository;
+use App\Domain\Repository\ItemRepositoryInterface;
+use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Item\DescriptionValue;
 use App\Domain\ValueObject\Item\ItemStatusEnum;
 use App\Domain\ValueObject\Item\NameValue;
@@ -29,8 +29,8 @@ class FillFakesCommand extends Command
     protected Generator $faker;
 
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly ItemRepository $itemRepository
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly ItemRepositoryInterface $itemRepository
     ) {
         $this->faker = Factory::create();
         parent::__construct();

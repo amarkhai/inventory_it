@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Entity\Item;
+namespace App\Domain\Repository;
 
+use App\Domain\Entity\Item\Item;
+use App\Domain\Entity\Item\ItemNotFoundException;
+use App\Domain\Entity\Item\JustCreatedItemMap;
 use Ramsey\Uuid\UuidInterface;
 
-interface ItemRepository
+interface ItemRepositoryInterface
 {
     /**
      * @return Item[]

@@ -6,7 +6,7 @@ use App\Application\DTO\RequestValidator;
 use App\Application\Middleware\CheckJWTTokenMiddleware;
 use App\Application\Settings\SettingsInterface;
 use App\Application\UseCase\Auth\JWTTokenCreator;
-use App\Domain\Entity\User\UserRepository;
+use App\Domain\Repository\UserRepositoryInterface;
 use DI\ContainerBuilder;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -76,7 +76,7 @@ return function (ContainerBuilder $containerBuilder) {
                 new Sha256(),
                 new Validator(),
                 $c->get(Clock::class),
-                $c->get(UserRepository::class),
+                $c->get(UserRepositoryInterface::class),
             );
         },
     ]);

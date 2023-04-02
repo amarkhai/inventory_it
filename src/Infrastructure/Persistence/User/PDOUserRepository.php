@@ -6,11 +6,11 @@ namespace App\Infrastructure\Persistence\User;
 
 use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserNotFoundException;
-use App\Domain\Entity\User\UserRepository;
+use App\Domain\Repository\UserRepositoryInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-class PDOUserRepository implements UserRepository
+class PDOUserRepository implements UserRepositoryInterface
 {
     public function __construct(private readonly \PDO $connection)
     {
