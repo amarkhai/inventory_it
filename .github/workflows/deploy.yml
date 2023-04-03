@@ -25,8 +25,7 @@ jobs:
           cd ${{secrets.WORKING_DIR }} &&
           git clone git@github.com:amarkhai/inventory_it.git . &&
           sudo chown www-data:www-data ${{secrets.WORKING_DIR }} -R &&
-          exit"
-        #          sh .deploy/deploy.sh &&
+          sh deploy.sh ${{ vars.SERVER_NAME }} ${{secrets.DB_DRIVER }} ${{secrets.DB_USER }} ${{secrets.DB_PASSWORD }} ${{secrets.DB_NAME }} ${{secrets.DB_HOST }} ${{secrets.DB_PORT }} ${{secrets.DB_DSN }} ${{secrets.JWT_TOKEN_EXPIRATION_TIME }} ${{secrets.JWT_SECRET }}"
       - name: cleanup
         run: rm -rf ~/.ssh
 
