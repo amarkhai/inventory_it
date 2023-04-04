@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Actions\Auth\Token\AccessTokenByPasswordAction;
+use App\Application\Actions\DefaultAction;
 use App\Application\Actions\Item\CreateItemAction;
 use App\Application\Actions\Item\ListItemsAction;
 use App\Application\Actions\Item\UpdateItemAction;
@@ -21,10 +22,7 @@ return function (App $app) {
         return $response;
     });
 
-    $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('Hello world!');
-        return $response;
-    });
+    $app->get('/', DefaultAction::class);
 
     $app->group('/auth', function (Group $group) {
         $group->post('/access-token', AccessTokenByPasswordAction::class);

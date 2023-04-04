@@ -41,7 +41,3 @@ jobs:
         run: vendor/bin/phpstan
 #      - name: Run test suite
 #        run: vendor/bin/phpunit
-
-
-
-
