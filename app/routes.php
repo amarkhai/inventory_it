@@ -8,6 +8,10 @@ use App\Application\Actions\Item\CreateItemAction;
 use App\Application\Actions\Item\ListItemsAction;
 use App\Application\Actions\Item\UpdateItemAction;
 use App\Application\Actions\Item\ViewItemAction;
+use App\Application\Actions\Right\CreateRightAction;
+use App\Application\Actions\Right\DeleteRightAction;
+use App\Application\Actions\Right\ListRightsByItemAction;
+use App\Application\Actions\Right\UpdateRightAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use App\Application\Middleware\CheckJWTTokenMiddleware;
@@ -38,5 +42,12 @@ return function (App $app) {
         $group->post('', CreateItemAction::class);
         $group->get('/{id}', ViewItemAction::class);
         $group->put('/{id}', UpdateItemAction::class);
+    })->add(CheckJWTTokenMiddleware::class);
+
+    $app->group('/rights', function (Group $group) {
+        $group->get('/by-item', ListRightsByItemAction::class);
+        $group->post('', CreateRightAction::class);
+        $group->put('/{id}', UpdateRightAction::class);
+        $group->delete('/{id}', DeleteRightAction::class);
     })->add(CheckJWTTokenMiddleware::class);
 };

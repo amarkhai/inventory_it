@@ -27,7 +27,7 @@ class CreateItemResponseMapper implements MapperInterface
     {
         return new CreateItemResponseDTO(
             $this->itemMap->getId()->getValue(),
-            $this->itemMap->getTemporaryId()->getValue(),
+            $this->itemMap->getTemporaryId()->toString(),
             $this->itemMap->getPath()->getValue(),
         );
     }

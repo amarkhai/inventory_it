@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\DTO\Request\Item;
 
 use App\Application\DTO\Request\AuthenticatedRequestDTO;
+use App\Domain\Constant\Constant;
 use App\Domain\ValueObject\Item\ItemStatusEnum;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,10 +14,12 @@ class UpdateItemRequestDTO extends AuthenticatedRequestDTO
 {
     #[Assert\NotBlank]
     #[Assert\Type("int")]
+    #[Assert\GreaterThan(0)]
     private int $id;
 
     #[Assert\NotBlank]
     #[Assert\Type("string")]
+    #[Assert\Length(min: 2, max: 100)]
     private ?string $name;
 
     #[Assert\Type("string")]
@@ -29,25 +32,22 @@ class UpdateItemRequestDTO extends AuthenticatedRequestDTO
 
     #[Assert\NotBlank]
     #[Assert\Type("string")]
+    #[Assert\Regex(Constant::ITEM_PATH_REGEX)]
     private ?string $path;
 
     #[Assert\NotBlank]
     #[Assert\Uuid]
     private ?string $owner_id;
 
-    /**
-     * @param Request $request
-     */
-    public function __construct(Request $request)
+    public function setValues(): void
     {
-        parent::__construct($request);
-
+        parent::setValues();
         $this->id = (int) $this->getRouteParam('id');
         $this->name = $this->getBodyParam('name');
         $this->description = $this->getBodyParam('description');
         $this->status = $this->getBodyParam('status');
         $this->path = $this->getBodyParam('path');
-        $this->owner_id = (string) $this->request->getAttribute('userUuid');
+        $this->owner_id = $this->getBodyParam('owner_id');
     }
 
     /**

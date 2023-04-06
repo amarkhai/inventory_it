@@ -50,7 +50,9 @@ return function (ContainerBuilder $containerBuilder) {
             /** @var array{dsn: string, user: string, password: string} $dbSettings */
             $dbSettings = $settings->get('db');
 
-            return new PDO($dbSettings['dsn'], $dbSettings['user'], $dbSettings['password']);
+            $pdo = new PDO($dbSettings['dsn'], $dbSettings['user'], $dbSettings['password']);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $pdo;
         },
         JWTTokenCreator::class => function (ContainerInterface $c) {
             $settings = $settings = $c->get(SettingsInterface::class);

@@ -2,19 +2,37 @@
 
 namespace App\Application\DTO\Request;
 
+use App\Application\DTO\RequestValidator;
+use App\Application\Exceptions\ValidationErrorException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
 abstract class RequestDTO
 {
-    protected Request $request;
+    private array $errors = [];
+
+    public function __construct(
+        protected Request $request,
+        protected RequestValidator $requestValidator
+    ) {
+        $this->setValues();
+        $this->validate();
+    }
 
     /**
-     * @param Request $request
+     * @return array
      */
-    public function __construct(Request $request)
+    public function getErrors(): array
     {
-        $this->request = $request;
+        return $this->errors;
+    }
+
+    /**
+     * @param array $errors
+     */
+    public function setErrors(array $errors): void
+    {
+        $this->errors = $errors;
     }
 
     protected function getBodyParam(string $paramName): ?string
@@ -29,4 +47,15 @@ abstract class RequestDTO
         $route = $routeContext->getRoute();
         return $route?->getArgument($paramName);
     }
+
+    protected function validate(): void
+    {
+        $violations = $this->requestValidator->validate($this);
+        if (!empty($violations)) {
+            $this->setErrors($violations);
+            throw new ValidationErrorException($this->request, $violations);
+        }
+    }
+
+    abstract public function setValues(): void;
 }

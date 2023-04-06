@@ -6,7 +6,7 @@ namespace App\Domain\ValueObject\Item;
 
 use App\Domain\ValueObject\ValueObjectInterface;
 
-class DescriptionValue implements ValueObjectInterface
+class ItemDescriptionValue implements ValueObjectInterface
 {
     private ?string $value;
 

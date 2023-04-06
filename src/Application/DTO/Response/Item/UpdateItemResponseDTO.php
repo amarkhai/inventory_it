@@ -21,10 +21,8 @@ class UpdateItemResponseDTO extends ResponseDTO
         return $this->result;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): bool
     {
-        return [
-            'result' => $this->getResult()
-        ];
+        return $this->getResult();
     }
 }

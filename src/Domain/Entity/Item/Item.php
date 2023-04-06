@@ -4,114 +4,120 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity\Item;
 
-use App\Domain\ValueObject\Item\DescriptionValue;
-use App\Domain\ValueObject\Item\IdValue;
-use App\Domain\ValueObject\Item\NameValue;
-use App\Domain\ValueObject\Item\OwnerIdValue;
-use App\Domain\ValueObject\Item\PathValue;
-use App\Domain\ValueObject\Item\StatusValue;
+use App\Domain\ValueObject\Item\ItemDescriptionValue;
+use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemNameValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
+use App\Domain\ValueObject\Item\ItemStatusEnum;
+use App\Domain\ValueObject\Right\RightTypeEnum;
+use Ramsey\Uuid\UuidInterface;
 
 class Item
 {
-    private IdValue $id;
-    private PathValue $path;
-    private StatusValue $status;
-    private OwnerIdValue $owner_id;
-    private NameValue $name;
-    private DescriptionValue $description;
+    public function __construct(
+        private ?ItemIdValue $id,
+        private ?ItemPathValue $path,
+        private ItemStatusEnum $status,
+        private UuidInterface $owner_id,
+        private ItemNameValue $name,
+        private ?ItemDescriptionValue $description
+    ) {
+    }
 
     /**
-     * @return IdValue
+     * @return ItemIdValue|null
      */
-    public function getId(): IdValue
+    /** @psalm-ignore-nullable-return */
+    public function getId(): ?ItemIdValue
     {
         return $this->id;
     }
 
     /**
-     * @param IdValue $id
+     * @param ItemIdValue|null $id
      */
-    public function setId(IdValue $id): void
+    public function setId(?ItemIdValue $id): void
     {
         $this->id = $id;
     }
 
     /**
-     * @return PathValue
+     * @return ItemPathValue|null
      */
-    public function getPath(): PathValue
+    /** @psalm-ignore-nullable-return */
+    public function getPath(): ?ItemPathValue
     {
         return $this->path;
     }
 
     /**
-     * @param PathValue $path
+     * @param ItemPathValue|null $path
      */
-    public function setPath(PathValue $path): void
+    public function setPath(?ItemPathValue $path): void
     {
         $this->path = $path;
     }
 
     /**
-     * @return StatusValue
+     * @return ItemStatusEnum
      */
-    public function getStatus(): StatusValue
+    public function getStatus(): ItemStatusEnum
     {
         return $this->status;
     }
 
     /**
-     * @param StatusValue $status
+     * @param ItemStatusEnum $status
      */
-    public function setStatus(StatusValue $status): void
+    public function setStatus(ItemStatusEnum $status): void
     {
         $this->status = $status;
     }
 
     /**
-     * @return OwnerIdValue
+     * @return UuidInterface
      */
-    public function getOwnerId(): OwnerIdValue
+    public function getOwnerId(): UuidInterface
     {
         return $this->owner_id;
     }
 
     /**
-     * @param OwnerIdValue $owner_id
+     * @param UuidInterface $owner_id
      */
-    public function setOwnerId(OwnerIdValue $owner_id): void
+    public function setOwnerId(UuidInterface $owner_id): void
     {
         $this->owner_id = $owner_id;
     }
 
     /**
-     * @return NameValue
+     * @return ItemNameValue
      */
-    public function getName(): NameValue
+    public function getName(): ItemNameValue
     {
         return $this->name;
     }
 
     /**
-     * @param NameValue $name
+     * @param ItemNameValue $name
      */
-    public function setName(NameValue $name): void
+    public function setName(ItemNameValue $name): void
     {
         $this->name = $name;
     }
 
     /**
-     * @return DescriptionValue
+     * @return ItemDescriptionValue|null
      */
-    public function getDescription(): DescriptionValue
+    public function getDescription(): ?ItemDescriptionValue
     {
         return $this->description;
     }
 
     /**
-     * @param DescriptionValue $description
+     * @param ItemDescriptionValue|null $description
      */
-    public function setDescription(DescriptionValue $description): void
+    public function setDescription(?ItemDescriptionValue $description): void
     {
         $this->description = $description;
     }

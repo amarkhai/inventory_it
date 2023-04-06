@@ -6,6 +6,7 @@ namespace App\Application\Handlers;
 
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
+use App\Application\Exceptions\ValidationErrorException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpException;
@@ -47,6 +48,9 @@ class HttpErrorHandler extends SlimErrorHandler
                 $error->setType(ActionError::BAD_REQUEST);
             } elseif ($exception instanceof HttpNotImplementedException) {
                 $error->setType(ActionError::NOT_IMPLEMENTED);
+            } elseif ($exception instanceof ValidationErrorException) {
+                $error->setType(ActionError::BAD_REQUEST);
+                $error->setData($exception->getErrors());
             }
         }
 
@@ -55,7 +59,7 @@ class HttpErrorHandler extends SlimErrorHandler
             && $exception instanceof Throwable
             && $this->displayErrorDetails
         ) {
-            $error->setDescription($exception->getMessage());
+            $error->setDescription($exception->getMessage() . ' at ' . $exception->getFile().':'.$exception->getLine());
         }
 
         $payload = new ActionPayload($statusCode, null, $error);

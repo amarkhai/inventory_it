@@ -7,6 +7,8 @@ namespace App\Domain\Repository;
 use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
+use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use Ramsey\Uuid\UuidInterface;
 
 interface ItemRepositoryInterface
@@ -15,20 +17,21 @@ interface ItemRepositoryInterface
      * @return Item[]
      */
     public function findAll(): array;
-    /**
-     * @param UuidInterface $userId
-     * @param int|null $rootItemId
-     * @return Item[]
-     */
-    public function findAllForUser(UuidInterface $userId, ?int $rootItemId = null): array;
 
     /**
      * @param UuidInterface $userId
-     * @param int $itemId
+     * @param ItemIdValue|null $rootItemId
+     * @return array
+     */
+    public function findAllForUser(UuidInterface $userId, ?ItemIdValue $rootItemId = null): array;
+
+    /**
+     * @param UuidInterface $userId
+     * @param ItemIdValue $itemId
      * @return Item
      * @throws ItemNotFoundException
      */
-    public function findOneForUserById(UuidInterface $userId, int $itemId): Item;
+    public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): Item;
 
     /**
      * @param UuidInterface $userId
@@ -37,16 +40,10 @@ interface ItemRepositoryInterface
      */
     public function findAllForUserByTerm(UuidInterface $userId, string $term): array;
 
-    /**
-     * @param Item $item
-     * @param string $temporaryId
-     * @param string|null $parentPath
-     * @return JustCreatedItemMap
-     */
     public function insert(
         Item $item,
-        string $temporaryId,
-        ?string $parentPath
+        UuidInterface $temporaryId,
+        ?ItemPathValue $parentPath
     ): JustCreatedItemMap;
 
     /**
@@ -54,4 +51,6 @@ interface ItemRepositoryInterface
      * @return bool
      */
     public function update(Item $item): bool;
+
+    public function findOneById(ItemIdValue $id): ?Item;
 }

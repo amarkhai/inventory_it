@@ -5,7 +5,117 @@ info:
 tags:
   - name: items
     description: Физические объекты, которые могут содержать другие объекты. Из них строится дерево.
+  - name: rights
+    description: Права на items.
 paths:
+  /rights/by-item:
+    get:
+      tags:
+        - rights
+      summary: Поиск rights по item id
+      parameters:
+        - name: item_id
+          in: query
+          description: Item ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Отдаем rights для item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Right'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+  /rights:
+    post:
+      tags:
+        - rights
+      summary: Добавление нового right
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Right'
+        required: true
+      responses:
+        '200':
+          description: Возвращаем true в случае успеха
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Неправильный запрос / ошибки валидации
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+  /rights/{right_id}:
+    put:
+      tags:
+        - rights
+      summary: Изменение right
+      parameters:
+        - name: right_id
+          in: path
+          description: ID of item
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Right'
+      responses:
+        '200':
+          description: Возвращаем true в случае успеха
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Неправильный запрос / ошибки валидации
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+    delete:
+      tags:
+        - rights
+      summary: Удаление right
+      parameters:
+        - name: right_id
+          in: path
+          description: ID of item
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Возвращаем true в случае успеха
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Неправильный запрос / ошибки валидации
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет прав
+
+
   /items:
     get:
       tags:
@@ -13,7 +123,7 @@ paths:
       summary: Получение items, доступных пользователю
       description: Получение в виде списка, деревья формируются на клиенте
       parameters:
-        - name: rootItemId
+        - name: root_item_id
           in: query
           description: Если указан, то отдаем только его и дочерние элементы
           required: false
@@ -59,13 +169,13 @@ paths:
           description: Нет прав
 
 
-  /items/{itemId}:
+  /items/{item_id}:
     get:
       tags:
         - items
       summary: Получение item по ID
       parameters:
-        - name: itemId
+        - name: item_id
           in: path
           description: ID of item
           required: true
@@ -89,7 +199,7 @@ paths:
         - items
       summary: Изменение item
       parameters:
-        - name: itemId
+        - name: item_id
           in: path
           description: ID of item
           required: true
@@ -115,7 +225,7 @@ paths:
         '403':
           description: Нет прав
 
-  /items/findByTerm:
+  /items/find-by-term:
     get:
       tags:
         - items
@@ -338,8 +448,8 @@ components:
           format: uuid
           example: 3422b448-2460-4fd2-9183-8000de6f8343
         item_id:
-          type: string
-          example: '12.15.134'
+          type: integer
+          example: 1454
         user_id:
           type: string
           format: uuid
@@ -362,7 +472,7 @@ components:
           example: 10
         path:
           type: string
-          example: 'sdfsd.sdf.gfd'
+          example: '213.43.5435'
 
     User:
       type: object
@@ -426,6 +536,4 @@ components:
               description: Access-token
               type: string
               example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2Nzk5MzI1OTAuMTgyNDI1LCJleHAiOjE2Nzk5MzYxOTAuMTgyNDI1fQ.z376dT-BTkzGMZSr0d2bm_9zlQnonQZkWNoULcH7fz0
-
-
 

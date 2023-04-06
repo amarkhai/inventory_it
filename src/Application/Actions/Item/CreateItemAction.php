@@ -27,15 +27,11 @@ class CreateItemAction extends Action
 
     /**
      * {@inheritdoc}
+     * @throws \JsonException
      */
     protected function action(): Response
     {
-        $dto = new CreateItemRequestDTO($this->request);
-
-        $violations = $this->validateRequestDTO($dto);
-        if (!empty($violations)) {
-            return $this->respondWithViolations($violations);
-        }
+        $dto = new CreateItemRequestDTO($this->request, $this->requestValidator);
 
         $item = ($this->useCase)($dto);
 
