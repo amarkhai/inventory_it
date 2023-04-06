@@ -2,15 +2,15 @@
 
 namespace App\Infrastructure\Command\Faker;
 
+use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\User\User;
 use App\Domain\Repository\ItemRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;
-use App\Domain\ValueObject\Item\DescriptionValue;
+use App\Domain\ValueObject\Item\ItemDescriptionValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Item\ItemStatusEnum;
-use App\Domain\ValueObject\Item\NameValue;
-use App\Domain\ValueObject\Item\OwnerIdValue;
-use App\Domain\ValueObject\Item\StatusValue;
+use App\Domain\ValueObject\Item\ItemNameValue;
 use Faker\Factory;
 use Faker\Generator;
 use Ramsey\Uuid\Rfc4122\UuidV4;
@@ -70,6 +70,7 @@ class FillFakesCommand extends Command
      * @param int $treesPerUser
      * @param int $maxDeepness
      * @return Item[]
+     * @throws DomainWrongEntityParamException
      */
     private function createItems(
         array $users,
@@ -92,7 +93,7 @@ class FillFakesCommand extends Command
             $curDeepness = rand(0, $maxDeepness - 1);
             for ($j = 0; $j < $curDeepness; $j++) {
                 $newItem = $this->createItem(
-                    $rootItem->getOwnerId()->getValue(),
+                    $rootItem->getOwnerId(),
                     $parentPath->getValue()
                 );
                 $parentPath = $newItem->getPath();
@@ -104,7 +105,7 @@ class FillFakesCommand extends Command
         while (count($createdItems) < $itemsNumber) {
             $parent = $prevItems[rand(0, count($prevItems) - 1)];
             $newItem = $this->createItem(
-                $parent->getOwnerId()->getValue(),
+                $parent->getOwnerId(),
                 $parent->getPath()->getValue()
             );
             $createdItems[] = $newItem;
@@ -113,18 +114,23 @@ class FillFakesCommand extends Command
         return $createdItems;
     }
 
+    /**
+     * @throws DomainWrongEntityParamException
+     */
     private function createItem(UuidInterface $ownerId, string $parentPath = null): Item
     {
-        $item = new Item();
-        $item->setName(new NameValue($this->faker->name));
-        $item->setStatus(new StatusValue(ItemStatusEnum::active));
-        $item->setDescription(new DescriptionValue($this->faker->text));
-        $item->setOwnerId(new OwnerIdValue($ownerId));
-
+        $item = new Item(
+            null,
+            null,
+            ItemStatusEnum::active,
+            $ownerId,
+            new ItemNameValue($this->faker->name),
+            new ItemDescriptionValue($this->faker->text)
+        );
         $itemMap = $this->itemRepository->insert(
             $item,
-            UuidV4::uuid4()->toString(),
-            $parentPath
+            UuidV4::uuid4(),
+            $parentPath ? new ItemPathValue($parentPath) : null
         );
 
         $item->setPath($itemMap->getPath());

@@ -6,10 +6,13 @@ namespace App\Infrastructure\Persistence\Item;
 
 use App\Domain\DataMapper\Item\CreatedItemMapDataMapper;
 use App\Domain\DataMapper\Item\ItemDataMapper;
+use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
 use App\Domain\Repository\ItemRepositoryInterface;
+use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use Ramsey\Uuid\UuidInterface;
 
 class PDOItemRepository implements ItemRepositoryInterface
@@ -29,23 +32,25 @@ class PDOItemRepository implements ItemRepositoryInterface
         return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
     }
 
-        /**
+    /**
      * @inheritDoc
      */
-    public function findAllForUser(UuidInterface $userId, ?int $rootItemId = null): array
+    public function findAllForUser(UuidInterface $userId, ?ItemIdValue $rootItemId = null): array
     {
+        //@todo искать не только по owner_id, но и по тем, на которые есть права
+        //@todo переделать методы в один
         return ($rootItemId) ? $this->findSubtree($userId, $rootItemId) : $this->findAllAvailable($userId);
     }
 
     /**
      * @inheritDoc
      */
-    public function findOneForUserById(UuidInterface $userId, int $itemId): Item
+    public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): Item
     {
         $stmt = $this->connection
             ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND id=:id');
         $stmt->bindValue(':owner_id', $userId);
-        $stmt->bindValue(':id', $itemId);
+        $stmt->bindValue(':id', $itemId->getValue());
         $stmt->execute();
         $row = $stmt->fetch();
         if (empty($row)) {
@@ -67,14 +72,14 @@ class PDOItemRepository implements ItemRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * @throws DomainWrongEntityParamException
      */
     public function insert(
         Item $item,
-        string $temporaryId,
-        ?string $parentPath
+        UuidInterface $temporaryId,
+        ?ItemPathValue $parentPath
     ): JustCreatedItemMap {
-        $pathPrefix = $parentPath ? $parentPath . '.' : '';
+        $pathPrefix = $parentPath ? $parentPath->getValue() . '.' : '';
 
         $stmt = $this->connection->prepare('
             INSERT INTO public.items (name, description, owner_id, path, status)
@@ -85,7 +90,7 @@ class PDOItemRepository implements ItemRepositoryInterface
         $stmt->bindValue(':description', $item->getDescription());
         $stmt->bindValue(':owner_id', $item->getOwnerId());
         $stmt->bindValue(':path_prefix', $pathPrefix);
-        $stmt->bindValue(':status', $item->getStatus());
+        $stmt->bindValue(':status', $item->getStatus()->getValue());
         $stmt->execute();
 
         $row = $stmt->fetch();
@@ -94,15 +99,15 @@ class PDOItemRepository implements ItemRepositoryInterface
             throw new \RuntimeException('Не удалось создать объект ItemIdMapping для Item с id=' . $item->getId());
         }
 
-        $row['temporary_id'] = $temporaryId;
+        $row['temporary_id'] = $temporaryId->toString();
         return (new CreatedItemMapDataMapper())->map($row);
     }
 
-    private function findSubtree(UuidInterface $userId, int $rootItemId): array
+    private function findSubtree(UuidInterface $userId, ItemIdValue $rootItemId): array
     {
         $stmt = $this->connection
             ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND path <@ :root_item_id');
-        $stmt->bindValue(':root_item_id', $rootItemId);
+        $stmt->bindValue(':root_item_id', $rootItemId->getValue());
         $stmt->bindValue(':owner_id', $userId);
         $stmt->execute();
         return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
@@ -127,11 +132,20 @@ class PDOItemRepository implements ItemRepositoryInterface
                 path=(:path)::ltree
             WHERE id=:id
         ');
-        $stmt->bindValue(':id', $item->getId());
-        $stmt->bindValue(':name', $item->getName());
-        $stmt->bindValue(':description', $item->getDescription());
+        $stmt->bindValue(':id', $item->getId()->getValue());
+        $stmt->bindValue(':name', $item->getName()->getValue());
+        $stmt->bindValue(':description', $item->getDescription()?->getValue());
         $stmt->bindValue(':path', $item->getPath()->getValue());
-        $stmt->bindValue(':status', $item->getStatus());
+        $stmt->bindValue(':status', $item->getStatus()->getValue());
         return $stmt->execute();
+    }
+
+    public function findOneById(ItemIdValue $id): ?Item
+    {
+        $stmt = $this->connection->prepare('SELECT * FROM items WHERE id = ?');
+        $stmt->execute([$id->getValue()]);
+        $item = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $item ? (new ItemDataMapper())->map($item) : null;
     }
 }

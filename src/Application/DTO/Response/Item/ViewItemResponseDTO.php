@@ -9,21 +9,21 @@ use App\Application\DTO\Response\ResponseDTO;
 class ViewItemResponseDTO extends ResponseDTO
 {
     private int $id;
-    private ?string $name;
+    private string $name;
     private ?string $description;
-    private ?string $path;
+    private string $path;
 
     /**
      * @param int $id
-     * @param string|null $name
+     * @param string $name
      * @param string|null $description
-     * @param string|null $path
+     * @param string $path
      */
     public function __construct(
         int $id,
-        ?string $name,
+        string $name,
         ?string $description,
-        ?string $path,
+        string $path,
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -40,17 +40,17 @@ class ViewItemResponseDTO extends ResponseDTO
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getPath(): ?string
+    public function getPath(): string
     {
         return $this->path;
     }

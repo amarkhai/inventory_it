@@ -7,6 +7,8 @@ use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
 use App\Domain\Repository\ItemRepositoryInterface;
+use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use Ramsey\Uuid\UuidInterface;
 
 class ItemInteractor
@@ -18,14 +20,13 @@ class ItemInteractor
 
     /**
      * @param UuidInterface $userId
-     * @param int|null $rootItemId
+     * @param ItemIdValue|null $rootItemId
      * @return Item[]
      */
     public function list(
         UuidInterface $userId,
-        ?int $rootItemId = null
+        ?ItemIdValue $rootItemId
     ): array {
-
         return $this->itemRepository->findAllForUser(
             $userId,
             $rootItemId
@@ -34,15 +35,14 @@ class ItemInteractor
 
     /**
      * @param UuidInterface $userId
-     * @param int $itemId
+     * @param ItemIdValue $itemId
      * @return Item
      * @throws ItemNotFoundException
      */
     public function getOne(
         UuidInterface $userId,
-        int $itemId
+        ItemIdValue $itemId
     ): Item {
-
         return $this->itemRepository->findOneForUserById(
             $userId,
             $itemId
@@ -51,10 +51,10 @@ class ItemInteractor
 
     public function create(
         Item $item,
-        string $temporaryId,
-        ?string $parentPath
+        UuidInterface $temporaryId,
+        ?ItemPathValue $parentPath
     ): JustCreatedItemMap {
-
+        //@todo чекать права на создание в $parentPath
         return $this->itemRepository->insert(
             $item,
             $temporaryId,
@@ -67,7 +67,8 @@ class ItemInteractor
      */
     public function update(Item $item): bool
     {
-        if (!$item->getId()->getValue()) {
+        //@todo чекать права на изменение объекта
+        if (!$item->getId()) {
             throw new DomainWrongEntityParamException('Item id value must not be null');
         }
 

@@ -26,15 +26,11 @@ class ViewItemAction extends Action
 
     /**
      * {@inheritdoc}
+     * @throws \JsonException
      */
     protected function action(): Response
     {
-        $dto = new ViewItemRequestDTO($this->request);
-
-        $violations = $this->validateRequestDTO($dto);
-        if (!empty($violations)) {
-            return $this->respondWithViolations($violations);
-        }
+        $dto = new ViewItemRequestDTO($this->request, $this->requestValidator);
 
         $data = ($this->useCase)($dto);
 

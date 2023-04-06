@@ -15,21 +15,18 @@ abstract class AuthenticatedRequestDTO extends RequestDTO
 {
     #[Assert\Uuid]
     #[Assert\NotBlank]
-    private UuidInterface $userId;
-
-
-    public function __construct(Request $request)
-    {
-        parent::__construct($request);
-        $this->userId = $this->request->getAttribute('userUuid');
-    }
-
+    private UuidInterface $requester_id;
 
     /**
      * @return UuidInterface
      */
-    public function getUserId(): UuidInterface
+    public function getRequesterId(): UuidInterface
     {
-        return $this->userId;
+        return $this->requester_id;
+    }
+
+    public function setValues(): void
+    {
+        $this->requester_id = $this->request->getAttribute('userUuid');
     }
 }

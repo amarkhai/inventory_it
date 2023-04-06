@@ -5,23 +5,20 @@ declare(strict_types=1);
 namespace App\Application\DTO\Request\Item;
 
 use App\Application\DTO\Request\AuthenticatedRequestDTO;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ListItemsRequestDTO extends AuthenticatedRequestDTO
 {
     #[Assert\Type("int")]
-    private ?int $rootItemId = null;
+    #[Assert\GreaterThan(0)]
+    private ?int $root_item_id = null;
 
-    /**
-     * @param Request $request
-     */
-    public function __construct(Request $request)
+    public function setValues(): void
     {
-        parent::__construct($request);
-        $rootItemId = $this->getBodyParam('rootItemId');
-        if (is_numeric($rootItemId)) {
-            $this->rootItemId = (int) $rootItemId;
+        parent::setValues();
+        $root_item_id = $this->getBodyParam('root_item_id');
+        if (is_numeric($root_item_id)) {
+            $this->root_item_id = (int) $root_item_id;
         }
     }
 
@@ -30,6 +27,6 @@ class ListItemsRequestDTO extends AuthenticatedRequestDTO
      */
     public function getRootItemId(): ?int
     {
-        return $this->rootItemId;
+        return $this->root_item_id;
     }
 }

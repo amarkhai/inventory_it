@@ -22,10 +22,13 @@ class ActionError implements JsonSerializable
 
     private ?string $description;
 
-    public function __construct(string $type, ?string $description = null)
+    private mixed $data;
+
+    public function __construct(string $type, ?string $description = null, mixed $data = null)
     {
         $this->type = $type;
         $this->description = $description;
+        $this->data = $data;
     }
 
     public function getType(): string
@@ -50,12 +53,27 @@ class ActionError implements JsonSerializable
         return $this;
     }
 
+    public function getData(): mixed
+    {
+        return $this->data;
+    }
+
+    public function setData(mixed $data): void
+    {
+        $this->data = $data;
+    }
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
-        return [
+        $res =  [
             'type' => $this->type,
             'description' => $this->description,
         ];
+
+        if ($this->data) {
+            $res['data'] = $this->data;
+        }
+        return $res;
     }
 }

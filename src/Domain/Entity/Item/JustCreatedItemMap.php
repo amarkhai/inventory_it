@@ -2,9 +2,9 @@
 
 namespace App\Domain\Entity\Item;
 
-use App\Domain\ValueObject\Item\JustCreatedIdValue;
-use App\Domain\ValueObject\Item\PathValue;
-use App\Domain\ValueObject\Item\TemporaryIdValue;
+use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  *  Соответствие временного $t_id, сгенерированного на клиенте постоянному $id,
@@ -12,54 +12,54 @@ use App\Domain\ValueObject\Item\TemporaryIdValue;
  */
 class JustCreatedItemMap
 {
-    private JustCreatedIdValue $id;
-    private TemporaryIdValue $temporary_id;
-    private PathValue $path;
+    private ItemIdValue $id;
+    private UuidInterface $temporary_id;
+    private ItemPathValue $path;
 
     /**
-     * @return JustCreatedIdValue
+     * @return ItemIdValue
      */
-    public function getId(): JustCreatedIdValue
+    public function getId(): ItemIdValue
     {
         return $this->id;
     }
 
     /**
-     * @param JustCreatedIdValue $id
+     * @param ItemIdValue $id
      */
-    public function setId(JustCreatedIdValue $id): void
+    public function setId(ItemIdValue $id): void
     {
         $this->id = $id;
     }
 
     /**
-     * @return TemporaryIdValue
+     * @return UuidInterface
      */
-    public function getTemporaryId(): TemporaryIdValue
+    public function getTemporaryId(): UuidInterface
     {
         return $this->temporary_id;
     }
 
     /**
-     * @param TemporaryIdValue $temporary_id
+     * @param UuidInterface $temporary_id
      */
-    public function setTemporaryId(TemporaryIdValue $temporary_id): void
+    public function setTemporaryId(UuidInterface $temporary_id): void
     {
         $this->temporary_id = $temporary_id;
     }
 
     /**
-     * @return PathValue
+     * @return ItemPathValue
      */
-    public function getPath(): PathValue
+    public function getPath(): ItemPathValue
     {
         return $this->path;
     }
 
     /**
-     * @param PathValue $path
+     * @param ItemPathValue $path
      */
-    public function setPath(PathValue $path): void
+    public function setPath(ItemPathValue $path): void
     {
         $this->path = $path;
     }
