@@ -11,6 +11,11 @@ use App\Domain\ValueObject\Item\ItemDescriptionValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Item\ItemStatusEnum;
 use App\Domain\ValueObject\Item\ItemNameValue;
+use App\Domain\ValueObject\User\PasswordHashValue;
+use App\Domain\ValueObject\User\FirstNameValue;
+use App\Domain\ValueObject\User\LastNameValue;
+use App\Domain\ValueObject\User\UserNameValue;
+use App\Domain\ValueObject\User\UserSecondNameValue;
 use Faker\Factory;
 use Faker\Generator;
 use Ramsey\Uuid\Rfc4122\UuidV4;
@@ -138,6 +143,9 @@ class FillFakesCommand extends Command
         return $item;
     }
 
+    /**
+     * @throws DomainWrongEntityParamException
+     */
     private function createUsers(int $usersNumber): array
     {
         $userIds = array_map(
@@ -149,8 +157,10 @@ class FillFakesCommand extends Command
         foreach ($userIds as $userId) {
             $user = new User(
                 $userId,
-                $this->faker->name,
-                \password_hash('123123', PASSWORD_DEFAULT),
+                new UserNameValue($this->faker->userName),
+                new PasswordHashValue(\password_hash('123123', PASSWORD_DEFAULT)),
+                new FirstNameValue($this->faker->firstName),
+                new LastNameValue($this->faker->lastName),
                 new \DateTimeImmutable()
             );
             $this->userRepository->save($user);

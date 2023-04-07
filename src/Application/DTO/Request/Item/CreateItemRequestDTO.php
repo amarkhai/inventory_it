@@ -38,7 +38,7 @@ class CreateItemRequestDTO extends AuthenticatedRequestDTO
         $this->name = $this->getBodyParam('name');
         $this->description = $this->getBodyParam('description');
         $this->parent_path = $this->getBodyParam('parent_path');
-        $this->owner_id = (string) $this->request->getAttribute('userUuid');
+        $this->owner_id = (string) $this->request->getAttribute('userIdentity')->getId();
     }
 
     /**

@@ -5,45 +5,33 @@ declare(strict_types=1);
 namespace App\Application\Actions\Auth\Token;
 
 use App\Application\Actions\Action;
+use App\Application\DTO\Request\Auth\AccessTokenByUsernameRequestDTO;
 use App\Application\DTO\RequestValidator;
-use App\Application\UseCase\Auth\JWTTokenCreator;
-use App\Domain\Repository\UserRepositoryInterface;
+use App\Application\UseCase\Auth\AccessTokenByUsernameUseCase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 
 class AccessTokenByPasswordAction extends Action
 {
     public function __construct(
         protected LoggerInterface $logger,
         protected RequestValidator $requestValidator,
-        private readonly UserRepositoryInterface $userRepository,
-        private readonly JWTTokenCreator $JWTTokenCreator
+        protected AccessTokenByUsernameUseCase $useCase
     ) {
         parent::__construct($logger, $requestValidator);
     }
+
+    /**
+     * @throws \JsonException
+     */
     protected function action(): Response
     {
-        $id = $this->request->getParsedBody()['id'] ?? null;
-        $password = $this->request->getParsedBody()['password'] ?? null;
+        $dto = new AccessTokenByUsernameRequestDTO($this->request, $this->requestValidator);
 
-        if (\is_null($id) || \is_null($password)) {
-            return $this->respondWithData('Incorrect request', 400);
-        }
+        $item = ($this->useCase)($dto);
 
-        $user = $this->userRepository->findUserOfId(Uuid::fromString($id));
+        $this->logger->info("Access token for user `{$dto->getUsername()}` was created.");
 
-        if (!\password_verify($password, $user->getPassword())) {
-            return $this->respondWithData('Incorrect credentials', 400);
-        }
-
-        $token = $this->JWTTokenCreator->createForUser($user);
-
-        return $this->respondWithData([
-            'iat' => $token->claims()->get('iat')->format('c'),
-            'exp' => $token->claims()->get('exp')->format('c'),
-            'nbf' => $token->claims()->get('nbf')->format('c'),
-            'access_token' => $token->toString(),
-        ]);
+        return $this->respondWithData($item);
     }
 }

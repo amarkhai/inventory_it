@@ -69,6 +69,6 @@ class CheckJWTTokenMiddleware implements MiddlewareInterface
 
         $user = $this->userRepository->findUserOfId(Uuid::fromString($userUuid));
 
-        return $handler->handle($request->withAttribute('userUuid', $user->getId()));
+        return $handler->handle($request->withAttribute('userIdentity', $user));
     }
 }

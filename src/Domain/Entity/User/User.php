@@ -4,80 +4,131 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity\User;
 
+use App\Domain\ValueObject\User\FirstNameValue;
+use App\Domain\ValueObject\User\LastNameValue;
+use App\Domain\ValueObject\User\UserNameValue;
+use App\Domain\ValueObject\User\PasswordHashValue;
+use DateTimeImmutable;
 use JsonSerializable;
 use Ramsey\Uuid\UuidInterface;
 
 class User implements JsonSerializable
 {
-    private UuidInterface $id;
-
-    private string $username;
-
-    private string $password;
-
-    private ?string $firstName = null;
-
-    private ?string $lastName = null;
-
-    private \DateTimeImmutable $createdAt;
-
-    public function __construct(UuidInterface $id, string $username, string $password, \DateTimeImmutable $createdAt)
-    {
-        $this->id = $id;
-        $this->username = $username;
-        $this->password = $password;
-        $this->createdAt = $createdAt;
+    public function __construct(
+        private UuidInterface $id,
+        private UserNameValue $username,
+        private PasswordHashValue $password_hash,
+        private ?FirstNameValue $first_name,
+        private ?LastNameValue $last_name,
+        private DateTimeImmutable $created_at
+    ) {
     }
 
+    /**
+     * @return UuidInterface
+     */
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function getUsername(): string
+    /**
+     * @param UuidInterface $id
+     */
+    public function setId(UuidInterface $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return UserNameValue
+     */
+    public function getUsername(): UserNameValue
     {
         return $this->username;
     }
 
-    public function getFirstName(): ?string
+    /**
+     * @param UserNameValue $username
+     */
+    public function setUsername(UserNameValue $username): void
     {
-        return $this->firstName;
+        $this->username = $username;
     }
 
-    public function getLastName(): ?string
+    /**
+     * @return FirstNameValue|null
+     */
+    public function getFirstName(): ?FirstNameValue
     {
-        return $this->lastName;
+        return $this->first_name;
+    }
+
+    /**
+     * @param FirstNameValue|null $first_name
+     */
+    public function setFirstName(?FirstNameValue $first_name): void
+    {
+        $this->first_name = $first_name;
+    }
+
+    /**
+     * @return LastNameValue|null
+     */
+    public function getLastName(): ?LastNameValue
+    {
+        return $this->last_name;
+    }
+
+    /**
+     * @param LastNameValue|null $last_name
+     */
+    public function setLastName(?LastNameValue $last_name): void
+    {
+        $this->last_name = $last_name;
+    }
+
+    /**
+     * @return DateTimeImmutable
+     */
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @param DateTimeImmutable $created_at
+     */
+    public function setCreatedAt(DateTimeImmutable $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    /**
+     * @return PasswordHashValue
+     */
+    public function getPasswordHash(): PasswordHashValue
+    {
+        return $this->password_hash;
+    }
+
+    /**
+     * @param PasswordHashValue $password_hash
+     */
+    public function setPasswordHash(PasswordHashValue $password_hash): void
+    {
+        $this->password_hash = $password_hash;
     }
 
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         return [
-            'id' => $this->id,
-            'username' => $this->username,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-            'createdAt' => $this->createdAt->format('Y-m-d H:i:s')
+            'id' => $this->getId(),
+            'username' => $this->getUsername(),
+            'first_name' => $this->getFirstName(),
+            'last_name' => $this->getLastName(),
+            'created_at' => $this->getCreatedAt()->format('Y-m-d H:i:s')
         ];
-    }
-
-    public function updateFirstName(?string $firstName): void
-    {
-        $this->firstName = $firstName;
-    }
-
-    public function updateLastName(?string $lastName): void
-    {
-        $this->lastName = $lastName;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
     }
 }

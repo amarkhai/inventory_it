@@ -43,10 +43,17 @@ class ItemInteractor
         UuidInterface $userId,
         ItemIdValue $itemId
     ): Item {
-        return $this->itemRepository->findOneForUserById(
+
+        $item = $this->itemRepository->findOneForUserById(
             $userId,
             $itemId
         );
+
+        if (!$item) {
+            throw new ItemNotFoundException();
+        }
+
+        return $item;
     }
 
     public function create(

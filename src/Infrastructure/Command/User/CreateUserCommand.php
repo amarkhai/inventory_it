@@ -6,6 +6,8 @@ namespace App\Infrastructure\Command\User;
 
 use App\Domain\Entity\User\User;
 use App\Domain\Repository\UserRepositoryInterface;
+use App\Domain\ValueObject\User\PasswordHashValue;
+use App\Domain\ValueObject\User\UserNameValue;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -34,8 +36,10 @@ class CreateUserCommand extends Command
     {
         $user = new User(
             Uuid::uuid4(),
-            $input->getArgument('username'),
-            \password_hash($input->getArgument('password'), PASSWORD_DEFAULT),
+            new UserNameValue($input->getArgument('username')),
+            new PasswordHashValue(\password_hash($input->getArgument('password'), PASSWORD_DEFAULT)),
+            null,
+            null,
             new \DateTimeImmutable()
         );
 

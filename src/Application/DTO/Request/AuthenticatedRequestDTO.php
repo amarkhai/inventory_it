@@ -27,6 +27,6 @@ abstract class AuthenticatedRequestDTO extends RequestDTO
 
     public function setValues(): void
     {
-        $this->requester_id = $this->request->getAttribute('userUuid');
+        $this->requester_id = $this->request->getAttribute('userIdentity')->getId();
     }
 }
