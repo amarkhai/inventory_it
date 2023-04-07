@@ -14,6 +14,7 @@ class ViewUserAction extends UserAction
      */
     protected function action(): Response
     {
+        //@todo снести или сделать как остальные actions
         $userId = $this->resolveArg('id');
         $user = $this->userRepository->findUserOfId(Uuid::fromString($userId));
 

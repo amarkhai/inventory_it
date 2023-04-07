@@ -50,7 +50,6 @@ class PDORightRepository implements RightRepositoryInterface
         $stmt->bindValue(':type', $right->getType()->getValue());
         $stmt->bindValue(':id', $right->getId()->toString());
 
-//        dd($stmt->queryString);
         return $stmt->execute();
     }
 
@@ -67,6 +66,9 @@ class PDORightRepository implements RightRepositoryInterface
         return array_map(fn ($row) => (new RightDataMapper())->map($row), $stmt->fetchAll());
     }
 
+    /**
+     * @throws DomainWrongEntityParamException
+     */
     public function findOneById(UuidInterface $id): ?Right
     {
         $stmt = $this->connection->prepare('SELECT * FROM rights WHERE id = ?');

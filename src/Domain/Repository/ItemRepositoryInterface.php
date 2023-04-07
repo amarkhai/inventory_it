@@ -28,10 +28,9 @@ interface ItemRepositoryInterface
     /**
      * @param UuidInterface $userId
      * @param ItemIdValue $itemId
-     * @return Item
-     * @throws ItemNotFoundException
+     * @return Item|null
      */
-    public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): Item;
+    public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): ?Item;
 
     /**
      * @param UuidInterface $userId

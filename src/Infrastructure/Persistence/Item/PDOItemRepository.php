@@ -45,7 +45,7 @@ class PDOItemRepository implements ItemRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): Item
+    public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): ?Item
     {
         $stmt = $this->connection
             ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND id=:id');
@@ -53,10 +53,8 @@ class PDOItemRepository implements ItemRepositoryInterface
         $stmt->bindValue(':id', $itemId->getValue());
         $stmt->execute();
         $row = $stmt->fetch();
-        if (empty($row)) {
-            throw new ItemNotFoundException();
-        }
-        return (new ItemDataMapper())->map($row);
+
+        return $row ? (new ItemDataMapper())->map($row) : null;
     }
 
     /**

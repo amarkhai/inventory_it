@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\User;
 
+use App\Domain\DataMapper\User\UserDataMapper;
+use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserNotFoundException;
 use App\Domain\Repository\UserRepositoryInterface;
-use Ramsey\Uuid\Uuid;
+use App\Domain\ValueObject\User\PasswordHashValue;
+use App\Domain\ValueObject\User\UserNameValue;
 use Ramsey\Uuid\UuidInterface;
 
 class PDOUserRepository implements UserRepositoryInterface
@@ -18,6 +21,7 @@ class PDOUserRepository implements UserRepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @throws DomainWrongEntityParamException
      */
     public function findAll(): array
     {
@@ -27,65 +31,31 @@ class PDOUserRepository implements UserRepositoryInterface
             throw new \RuntimeException('Не удалось получить список из всех пользователей');
         }
 
-        $users = $query->fetchAll(\PDO::FETCH_ASSOC);
-
-        return array_map(function (array $item) {
-            $createdAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', $item['created_at']);
-            if ($createdAt === false) {
-                throw new \RuntimeException('Некорректный created_at у пользователя ' . $item['id']);
-            }
-            $user = new User(
-                Uuid::fromString($item['id']),
-                $item['username'],
-                $item['password'],
-                $createdAt
-            );
-            $user->updateFirstName($item['first_name']);
-            $user->updateLastName($item['last_name']);
-
-            return $user;
-        }, $users);
+        return array_map(fn ($row) => (new UserDataMapper())->map($row), $query->fetchAll());
     }
 
     /**
      * {@inheritdoc}
+     * @throws DomainWrongEntityParamException
      */
-    public function findUserOfId(UuidInterface $id): User
+    public function findUserOfId(UuidInterface $id): ?User
     {
         $stmt = $this->connection->prepare('SELECT * FROM users WHERE id = ?');
         $stmt->execute([$id->toString()]);
         $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if ($userData === false) {
-            throw new UserNotFoundException('Пользователь не найден');
-        }
-
-        $createdAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sp', (string)$userData['created_at']);
-        if ($createdAt === false) {
-            throw new \RuntimeException('Некорректный created_at у пользователя ' . $userData['id']);
-        }
-
-        $user = new User(
-            Uuid::fromString((string)$userData['id']),
-            (string)$userData['username'],
-            (string)$userData['password'],
-            $createdAt
-        );
-        $user->updateFirstName((string)$userData['first_name']);
-        $user->updateLastName((string)$userData['last_name']);
-
-        return $user;
+        return $userData ? (new UserDataMapper())->map($userData) : null;
     }
 
     public function save(User $user): void
     {
         $stmt = $this->connection->prepare('
-            INSERT INTO public.users (id, username, password, first_name, last_name, created_at)
-            VALUES (:id, :username, :password, :first_name, :last_name, :created_at)
+            INSERT INTO public.users (id, username, password_hash, first_name, last_name, created_at)
+            VALUES (:id, :username, :password_hash, :first_name, :last_name, :created_at)
         ');
         $stmt->bindValue(':id', $user->getId()->toString());
         $stmt->bindValue(':username', $user->getUsername());
-        $stmt->bindValue(':password', $user->getPassword());
+        $stmt->bindValue(':password_hash', $user->getPasswordHash());
         $stmt->bindValue(':first_name', $user->getFirstName());
         $stmt->bindValue(':last_name', $user->getLastName());
         $stmt->bindValue(':created_at', $user->getCreatedAt()->format('Y-m-d H:i:s'));
@@ -95,5 +65,16 @@ class PDOUserRepository implements UserRepositoryInterface
     public function delete(UuidInterface $id): void
     {
         // TODO: Implement delete() method.
+    }
+
+    /**
+     * @throws DomainWrongEntityParamException
+     */
+    public function findOneByUsername(UserNameValue $username): ?User
+    {
+        $stmt = $this->connection->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+        $row = $stmt->fetch();
+        return $row ? (new UserDataMapper())->map($row) : null;
     }
 }

@@ -27,7 +27,7 @@ class ItemDataMapper implements DataMapperInterface
             ItemStatusEnum::from($row['status']),
             Uuidv4::fromString($row['owner_id']),
             new ItemNameValue($row['name']),
-            new ItemDescriptionValue($row['description'])
+            $row['description'] ? new ItemDescriptionValue($row['description']) : null
         );
     }
 }
