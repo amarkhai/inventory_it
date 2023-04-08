@@ -16,9 +16,6 @@ interface UserRepositoryInterface
      */
     public function findAll(): array;
 
-    /**
-     * @throws UserNotFoundException
-     */
     public function findUserOfId(UuidInterface $id): ?User;
 
     public function save(User $user): void;

@@ -5,28 +5,26 @@ declare(strict_types=1);
 namespace App\Application\DTO\Request\Item;
 
 use App\Application\DTO\Request\AuthenticatedRequestDTO;
+use App\Domain\Constant\Constant;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ListItemsRequestDTO extends AuthenticatedRequestDTO
 {
-    #[Assert\Type("int")]
-    #[Assert\GreaterThan(0)]
-    private ?int $root_item_id = null;
+    #[Assert\Type("string")]
+    #[Assert\Regex(Constant::ITEM_PATH_REGEX)]
+    private ?string $root_item_path;
 
     public function setValues(): void
     {
         parent::setValues();
-        $root_item_id = $this->getBodyParam('root_item_id');
-        if (is_numeric($root_item_id)) {
-            $this->root_item_id = (int) $root_item_id;
-        }
+        $this->root_item_path = $this->getBodyParam('root_item_path');
     }
 
     /**
-     * @return int|null
+     * @return string|null
      */
-    public function getRootItemId(): ?int
+    public function getRootItemPath(): ?string
     {
-        return $this->root_item_id;
+        return $this->root_item_path;
     }
 }

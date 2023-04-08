@@ -2,7 +2,7 @@
 
 namespace App\Domain\Entity\Right;
 
-use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Right\RightTypeEnum;
 use Ramsey\Uuid\UuidInterface;
 
@@ -10,7 +10,7 @@ class Right
 {
     public function __construct(
         private UuidInterface $id,
-        private ItemIdValue $item_id,
+        private ItemPathValue $path,
         private UuidInterface $user_id,
         private RightTypeEnum $type,
     ) {
@@ -33,19 +33,19 @@ class Right
     }
 
     /**
-     * @return ItemIdValue
+     * @return ItemPathValue
      */
-    public function getItemId(): ItemIdValue
+    public function getPath(): ItemPathValue
     {
-        return $this->item_id;
+        return $this->path;
     }
 
     /**
-     * @param ItemIdValue $item_id
+     * @param ItemPathValue $path
      */
-    public function setItemId(ItemIdValue $item_id): void
+    public function setPath(ItemPathValue $path): void
     {
-        $this->item_id = $item_id;
+        $this->path = $path;
     }
 
     /**

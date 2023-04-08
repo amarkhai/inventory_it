@@ -5,7 +5,7 @@ namespace App\Domain\DataMapper\Right;
 use App\Domain\DataMapper\DataMapperInterface;
 use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Right\Right;
-use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Right\RightTypeEnum;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 
@@ -20,7 +20,7 @@ class RightDataMapper implements DataMapperInterface
     {
         return new Right(
             Uuidv4::fromString($row['id']),
-            new ItemIdValue($row['item_id']),
+            new ItemPathValue($row['path']),
             Uuidv4::fromString($row['user_id']),
             RightTypeEnum::from($row['type']),
         );

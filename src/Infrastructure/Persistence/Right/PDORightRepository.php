@@ -9,6 +9,7 @@ use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Right\Right;
 use App\Domain\Repository\RightRepositoryInterface;
 use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use Ramsey\Uuid\UuidInterface;
 
 class PDORightRepository implements RightRepositoryInterface
@@ -24,11 +25,11 @@ class PDORightRepository implements RightRepositoryInterface
     public function insert(Right $right): bool
     {
         $stmt = $this->connection->prepare('
-            INSERT INTO public.rights (id, item_id, user_id, type)
+            INSERT INTO public.rights (id, path, user_id, type)
             VALUES (:id, :item_id, :user_id, :type)
         ');
         $stmt->bindValue(':id', $right->getId());
-        $stmt->bindValue(':item_id', $right->getItemId());
+        $stmt->bindValue(':path', $right->getPath());
         $stmt->bindValue(':user_id', $right->getUserId());
         $stmt->bindValue(':type', $right->getType()->getValue());
         return $stmt->execute();
@@ -39,13 +40,13 @@ class PDORightRepository implements RightRepositoryInterface
         //@todo сделать обновление конкретных полей, чтобы не переписывалась вся сущность
         $stmt = $this->connection->prepare('
             UPDATE rights SET        
-                item_id=:item_id,
+                path=:path,
                 user_id=:user_id,
                 type=:type
             WHERE id=:id
         ');
 
-        $stmt->bindValue(':item_id', $right->getItemId());
+        $stmt->bindValue(':path', $right->getPath());
         $stmt->bindValue(':user_id', $right->getUserId());
         $stmt->bindValue(':type', $right->getType()->getValue());
         $stmt->bindValue(':id', $right->getId()->toString());
@@ -83,5 +84,25 @@ class PDORightRepository implements RightRepositoryInterface
         $stmt = $this->connection->prepare('DELETE FROM rights WHERE id=:id');
         $stmt->bindValue(':id', $right->getId());
         return $stmt->execute();
+    }
+
+    /**
+     * @throws DomainWrongEntityParamException
+     */
+    public function findOneForUserByPath(
+        UuidInterface $userId,
+        ItemPathValue $path
+    ): ?Right {
+        $stmt = $this->connection->prepare('
+                SELECT * FROM rights 
+                WHERE user_id = :user_id
+                    AND path = :path
+            ');
+        $stmt->bindValue(':user_id', $userId->toString());
+        $stmt->bindValue(':path', $path->getValue());
+        $stmt->execute();
+        $right = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $right ? (new RightDataMapper())->map($right) : null;
     }
 }

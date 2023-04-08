@@ -6,30 +6,34 @@ use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
+use App\Domain\Entity\Right\Right;
 use App\Domain\Repository\ItemRepositoryInterface;
+use App\Domain\Repository\RightRepositoryInterface;
 use App\Domain\ValueObject\Item\ItemIdValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
+use App\Domain\ValueObject\Right\RightTypeEnum;
 use Ramsey\Uuid\UuidInterface;
 
 class ItemInteractor
 {
     public function __construct(
-        protected ItemRepositoryInterface $itemRepository
+        protected ItemRepositoryInterface $itemRepository,
+        protected RightRepositoryInterface $rightRepository
     ) {
     }
 
     /**
      * @param UuidInterface $userId
-     * @param ItemIdValue|null $rootItemId
+     * @param ItemPathValue|null $rootItemPath
      * @return Item[]
      */
-    public function list(
+    public function listAvailableForUser(
         UuidInterface $userId,
-        ?ItemIdValue $rootItemId
+        ?ItemPathValue $rootItemPath
     ): array {
         return $this->itemRepository->findAllForUser(
             $userId,
-            $rootItemId
+            $rootItemPath
         );
     }
 
@@ -39,7 +43,7 @@ class ItemInteractor
      * @return Item
      * @throws ItemNotFoundException
      */
-    public function getOne(
+    public function getOneAvailableForUser(
         UuidInterface $userId,
         ItemIdValue $itemId
     ): Item {
@@ -56,12 +60,24 @@ class ItemInteractor
         return $item;
     }
 
+    /**
+     * @throws DomainWrongEntityParamException
+     */
     public function create(
+        UuidInterface $requesterId,
         Item $item,
         UuidInterface $temporaryId,
         ?ItemPathValue $parentPath
     ): JustCreatedItemMap {
-        //@todo чекать права на создание в $parentPath
+
+        if ($parentPath) {
+            $parentItem = $this->itemRepository->findOneByPath($parentPath);
+            if (!$parentItem) {
+                throw new DomainWrongEntityParamException('Item with this path does not exists.');
+            }
+            $this->checkCanManageItem($requesterId, $parentItem);
+        }
+
         return $this->itemRepository->insert(
             $item,
             $temporaryId,
@@ -70,15 +86,47 @@ class ItemInteractor
     }
 
     /**
+     * @param UuidInterface $requesterId
+     * @param Item $item
+     * @return bool
      * @throws DomainWrongEntityParamException
      */
-    public function update(Item $item): bool
-    {
-        //@todo чекать права на изменение объекта
+    public function update(
+        UuidInterface $requesterId,
+        Item $item
+    ): bool {
+
         if (!$item->getId()) {
             throw new DomainWrongEntityParamException('Item id value must not be null');
         }
 
+        $savedItem = $this->itemRepository->findOneById($item->getId());
+        if (!$savedItem) {
+            throw new DomainWrongEntityParamException('Item does not exists.');
+        }
+
+        // проверка прав на изменение item, в которую перемещается эта item
+        if ($savedItem->getPath()->getValue() !== $item->getPath()->getValue()) {
+            //@todo сделать проверку
+        }
+
+        $this->checkCanManageItem($requesterId, $savedItem);
+
         return $this->itemRepository->update($item);
+    }
+
+    /**
+     * @throws DomainWrongEntityParamException
+     */
+    private function checkCanManageItem(
+        UuidInterface $requesterId,
+        Item $item
+    ): void {
+        if (!$item->getOwnerId()->equals($requesterId)) {
+            $savedRight = $this->rightRepository->findOneForUserByPath($requesterId, $item->getPath());
+            if (!$savedRight || $savedRight->getType() !== RightTypeEnum::rw) {
+                throw new DomainWrongEntityParamException('Item update prohibited for you.');
+            }
+        }
     }
 }

@@ -35,6 +35,7 @@ class CreateItemUseCase implements ActionUseCaseInterface
 
         $parentPath = $dto->getParentPath();
         $itemMap = $this->interactor->create(
+            $dto->getRequesterId(),
             $item,
             UuidV4::fromString($dto->getTemporaryId()),
             $parentPath ? new ItemPathValue($parentPath) : null

@@ -36,16 +36,18 @@ class PDOItemRepository implements ItemRepositoryInterface
      * @inheritDoc
      * @throws DomainWrongEntityParamException
      */
-    public function findAllForUser(UuidInterface $userId, ?ItemIdValue $rootItemId = null): array
+    public function findAllForUser(UuidInterface $userId, ?ItemPathValue $rootItemPath = null): array
     {
-        //@todo искать не только по owner_id, но и по тем, на которые есть права
+        $query = 'SELECT * FROM items WHERE 
+                    (
+                        owner_id=:user_id 
+                        OR path <@ ARRAY(select path from rights where user_id = :user_id)
+                    )';
+        $values = [':user_id' => $userId];
 
-        $query = 'SELECT * FROM items WHERE owner_id=:owner_id';
-        $values = [':owner_id' => $userId];
-
-        if ($rootItemId) {
-            $query .= ' AND path <@ :root_item_id';
-            $values[':root_item_id'] = $rootItemId->getValue();
+        if ($rootItemPath) {
+            $query .= ' AND path <@ :root_item_path';
+            $values[':root_item_path'] = $rootItemPath->getValue();
         }
 
         $stmt = $this->connection->prepare($query);
@@ -63,8 +65,14 @@ class PDOItemRepository implements ItemRepositoryInterface
     public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): ?Item
     {
         $stmt = $this->connection
-            ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND id=:id');
-        $stmt->bindValue(':owner_id', $userId);
+            ->prepare('SELECT * FROM items WHERE 
+                        id=:id
+                        AND (
+                            owner_id=:user_id
+                            OR path <@ ARRAY(select path from rights where user_id = :user_id)
+                        )                       
+            ');
+        $stmt->bindValue(':user_id', $userId);
         $stmt->bindValue(':id', $itemId->getValue());
         $stmt->execute();
         $row = $stmt->fetch();
@@ -77,7 +85,7 @@ class PDOItemRepository implements ItemRepositoryInterface
      */
     public function findAllForUserByTerm(UuidInterface $userId, string $term): array
     {
-//@todo проверить
+        //@todo сделать
         $stmt = $this->connection->prepare('SELECT * FROM items WHERE owner_id=:owner_id');
         $stmt->bindValue(':owner_id', $userId);
         $stmt->execute();
@@ -135,10 +143,25 @@ class PDOItemRepository implements ItemRepositoryInterface
         return $stmt->execute();
     }
 
+    /**
+     * @throws DomainWrongEntityParamException
+     */
     public function findOneById(ItemIdValue $id): ?Item
     {
         $stmt = $this->connection->prepare('SELECT * FROM items WHERE id = ?');
         $stmt->execute([$id->getValue()]);
+        $item = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $item ? (new ItemDataMapper())->map($item) : null;
+    }
+
+    /**
+     * @throws DomainWrongEntityParamException
+     */
+    public function findOneByPath(ItemPathValue $path): ?Item
+    {
+        $stmt = $this->connection->prepare('SELECT * FROM items WHERE path = ?');
+        $stmt->execute([$path->getValue()]);
         $item = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return $item ? (new ItemDataMapper())->map($item) : null;

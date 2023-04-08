@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Repository;
 
 use App\Domain\Entity\Item\Item;
-use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
 use App\Domain\ValueObject\Item\ItemIdValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
@@ -20,10 +19,10 @@ interface ItemRepositoryInterface
 
     /**
      * @param UuidInterface $userId
-     * @param ItemIdValue|null $rootItemId
+     * @param ItemPathValue|null $rootItemPath
      * @return array
      */
-    public function findAllForUser(UuidInterface $userId, ?ItemIdValue $rootItemId = null): array;
+    public function findAllForUser(UuidInterface $userId, ?ItemPathValue $rootItemPath = null): array;
 
     /**
      * @param UuidInterface $userId
@@ -52,4 +51,5 @@ interface ItemRepositoryInterface
     public function update(Item $item): bool;
 
     public function findOneById(ItemIdValue $id): ?Item;
+    public function findOneByPath(ItemPathValue $path): ?Item;
 }

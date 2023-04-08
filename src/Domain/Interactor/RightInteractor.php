@@ -6,6 +6,7 @@ use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Right\Right;
 use App\Domain\Repository\ItemRepositoryInterface;
 use App\Domain\Repository\RightRepositoryInterface;
+use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Item\ItemIdValue;
 use Ramsey\Uuid\UuidInterface;
 
@@ -13,7 +14,8 @@ class RightInteractor
 {
     public function __construct(
         protected RightRepositoryInterface $rightRepository,
-        protected ItemRepositoryInterface $itemRepository
+        protected ItemRepositoryInterface $itemRepository,
+        protected UserRepositoryInterface $userRepository
     ) {
     }
 
@@ -43,8 +45,16 @@ class RightInteractor
         UuidInterface $requesterId,
         Right $right
     ): bool {
-        //@todo check user fk
-        //@todo set (update if exists)
+
+        $user = $this->userRepository->findUserOfId($right->getUserId());
+        if (!$user) {
+            throw new DomainWrongEntityParamException('User does not exists.');
+        }
+
+        $savedRight = $this->rightRepository->findOneForUserByPath($requesterId, $right->getPath());
+        if ($savedRight) {
+            throw new DomainWrongEntityParamException('Right for this user and item already exists.');
+        }
 
         $this->checkCanManageRight($requesterId, $right);
         return $this->rightRepository->insert($right);
@@ -57,7 +67,10 @@ class RightInteractor
         UuidInterface $requesterId,
         Right $right
     ): bool {
-        //@todo выдавать ошибку при отсутствии right(item too)
+        $savedRight = $this->rightRepository->findOneForUserByPath($requesterId, $right->getPath());
+        if (!$savedRight) {
+            throw new DomainWrongEntityParamException('Right does not exists.');
+        }
 
         $this->checkCanManageRight($requesterId, $right);
         return $this->rightRepository->update($right);
@@ -86,7 +99,7 @@ class RightInteractor
         UuidInterface $requesterId,
         Right $right
     ): void {
-        $item = $this->itemRepository->findOneById($right->getItemId());
+        $item = $this->itemRepository->findOneByPath($right->getPath());
         if (!$item || !$item->getOwnerId()->equals($requesterId)) {
             throw new DomainWrongEntityParamException('User does not own this item.');
         }

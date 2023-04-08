@@ -26,11 +26,13 @@ class ViewItemResponseMapper implements MapperInterface
 
     public function map(): ViewItemResponseDTO
     {
+        //@todo отдавать права юзера на item
         return new ViewItemResponseDTO(
             $this->item->getId()->getValue(),
             $this->item->getName()->getValue(),
             $this->item->getDescription()?->getValue(),
             $this->item->getPath()->getValue(),
+            $this->item->getOwnerId()->toString()
         );
     }
 }

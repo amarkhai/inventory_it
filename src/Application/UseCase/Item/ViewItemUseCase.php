@@ -27,7 +27,7 @@ class ViewItemUseCase implements ActionUseCaseInterface
      */
     public function __invoke(ViewItemRequestDTO $dto): ViewItemResponseDTO
     {
-        $item = $this->interactor->getOne(
+        $item = $this->interactor->getOneAvailableForUser(
             $dto->getRequesterid(),
             new ItemIdValue($dto->getItemId())
         );
