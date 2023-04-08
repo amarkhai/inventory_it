@@ -8,7 +8,7 @@ use App\Application\DTO\Request\Right\CreateRightRequestDTO;
 use App\Application\Mappers\Item\Request\RequestMapperInterface;
 use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Right\Right;
-use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Right\RightTypeEnum;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 
@@ -32,7 +32,7 @@ class CreateRightRequestMapper implements RequestMapperInterface
     {
         return new Right(
             Uuidv4::fromString($this->requestDTO->getId()),
-            new ItemIdValue($this->requestDTO->getItemId()),
+            new ItemPathValue($this->requestDTO->getPath()),
             Uuidv4::fromString($this->requestDTO->getUserId()),
             RightTypeEnum::from($this->requestDTO->getType())
         );

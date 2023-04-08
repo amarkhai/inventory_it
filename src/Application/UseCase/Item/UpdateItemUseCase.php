@@ -29,7 +29,10 @@ class UpdateItemUseCase implements ActionUseCaseInterface
         $this->requestMapper->setRequestDto($dto);
         $item = $this->requestMapper->map();
 
-        $result = $this->interactor->update($item);
+        $result = $this->interactor->update(
+            $dto->getRequesterId(),
+            $item
+        );
 
         $this->responseMapper->setResult($result);
         return $this->responseMapper->map();

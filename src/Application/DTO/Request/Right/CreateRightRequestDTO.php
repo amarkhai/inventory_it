@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\DTO\Request\Right;
 
 use App\Application\DTO\Request\AuthenticatedRequestDTO;
+use App\Domain\Constant\Constant;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateRightRequestDTO extends AuthenticatedRequestDTO
@@ -14,9 +15,9 @@ class CreateRightRequestDTO extends AuthenticatedRequestDTO
     private ?string $id;
 
     #[Assert\NotBlank]
-    #[Assert\Type("int")]
-    #[Assert\GreaterThan(0)]
-    private ?int $item_id;
+    #[Assert\Type("string")]
+    #[Assert\Regex(Constant::ITEM_PATH_REGEX)]
+    private ?string $path;
 
     #[Assert\NotBlank]
     #[Assert\Uuid]
@@ -31,7 +32,7 @@ class CreateRightRequestDTO extends AuthenticatedRequestDTO
     {
         parent::setValues();
         $this->id = $this->getBodyParam('id');
-        $this->item_id = (int) $this->getBodyParam('item_id');
+        $this->path = $this->getBodyParam('path');
         $this->user_id = $this->getBodyParam('user_id');
         $this->type = $this->getBodyParam('type');
     }
@@ -46,12 +47,12 @@ class CreateRightRequestDTO extends AuthenticatedRequestDTO
     }
 
     /**
-     * @return int|null
+     * @return string|null
      */
     /** @psalm-ignore-nullable-return */
-    public function getItemId(): ?int
+    public function getPath(): ?string
     {
-        return $this->item_id;
+        return $this->path;
     }
 
     /**

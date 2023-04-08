@@ -8,27 +8,13 @@ use App\Application\DTO\Response\ResponseDTO;
 
 class ViewItemResponseDTO extends ResponseDTO
 {
-    private int $id;
-    private string $name;
-    private ?string $description;
-    private string $path;
-
-    /**
-     * @param int $id
-     * @param string $name
-     * @param string|null $description
-     * @param string $path
-     */
     public function __construct(
-        int $id,
-        string $name,
-        ?string $description,
-        string $path,
+        private readonly int $id,
+        private readonly string $name,
+        private readonly ?string $description,
+        private readonly string $path,
+        private readonly string $owner_id,
     ) {
-        $this->id = $id;
-        $this->name = $name;
-        $this->description = $description;
-        $this->path = $path;
     }
 
     /**
@@ -63,6 +49,14 @@ class ViewItemResponseDTO extends ResponseDTO
         return $this->description;
     }
 
+    /**
+     * @return string
+     */
+    public function getOwnerId(): string
+    {
+        return $this->owner_id;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -70,6 +64,7 @@ class ViewItemResponseDTO extends ResponseDTO
             'name' => $this->getName(),
             'description' => $this->getDescription(),
             'path' => $this->getPath(),
+            'owner_id' => $this->getOwnerId(),
         ];
     }
 }

@@ -25,12 +25,14 @@ class ListItemsResponseMapper implements MapperInterface
 
     public function map(): array
     {
+        //@todo отдавать права юзера на item
         return array_map(function ($item) {
             return new ListItemResponseDTO(
                 $item->getId()->getValue(),
                 $item->getName()->getValue(),
                 $item->getDescription()?->getValue(),
                 $item->getPath()->getValue(),
+                $item->getOwnerId()->toString()
             );
         }, $this->items);
     }

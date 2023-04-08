@@ -9,6 +9,7 @@ use App\Application\UseCase\ActionUseCaseInterface;
 use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Interactor\ItemInteractor;
 use App\Domain\ValueObject\Item\ItemIdValue;
+use App\Domain\ValueObject\Item\ItemPathValue;
 
 class ListItemsUseCase implements ActionUseCaseInterface
 {
@@ -25,10 +26,10 @@ class ListItemsUseCase implements ActionUseCaseInterface
      */
     public function __invoke(ListItemsRequestDTO $dto): array
     {
-        $rootItemId = $dto->getRootItemId();
-        $items = $this->interactor->list(
+        $rootItemPath = $dto->getRootItemPath();
+        $items = $this->interactor->listAvailableForUser(
             $dto->getRequesterid(),
-            $rootItemId ? new ItemIdValue($rootItemId) : null
+            $rootItemPath ? new ItemPathValue($rootItemPath) : null
         );
 
         $this->responseMapper->setItems($items);

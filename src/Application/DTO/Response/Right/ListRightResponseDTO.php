@@ -10,7 +10,7 @@ class ListRightResponseDTO extends ResponseDTO
 {
     public function __construct(
         private string $id,
-        private int $item_id,
+        private string $path,
         private string $user_id,
         private string $type
     ) {
@@ -33,19 +33,19 @@ class ListRightResponseDTO extends ResponseDTO
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getItemId(): int
+    public function getPath(): string
     {
-        return $this->item_id;
+        return $this->path;
     }
 
     /**
-     * @param int $item_id
+     * @param string $path
      */
-    public function setItemId(int $item_id): void
+    public function setPath(string $path): void
     {
-        $this->item_id = $item_id;
+        $this->path = $path;
     }
 
     /**
@@ -84,7 +84,7 @@ class ListRightResponseDTO extends ResponseDTO
     {
         return [
             'id' => $this->getId(),
-            'item_id' => $this->getItemId(),
+            'path' => $this->getPath(),
             'user_id' => $this->getUserId(),
             'type' => $this->getType(),
         ];

@@ -13,8 +13,9 @@ use Ramsey\Uuid\UuidInterface;
 
 class PDOUserRepository implements UserRepositoryInterface
 {
-    public function __construct(private readonly \PDO $connection)
-    {
+    public function __construct(
+        private readonly \PDO $connection
+    ) {
     }
 
     /**
@@ -33,7 +34,6 @@ class PDOUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
      * @throws DomainWrongEntityParamException
      */
     public function findUserOfId(UuidInterface $id): ?User

@@ -123,13 +123,12 @@ paths:
       summary: Получение items, доступных пользователю
       description: Получение в виде списка, деревья формируются на клиенте
       parameters:
-        - name: root_item_id
+        - name: root_item_path
           in: query
           description: Если указан, то отдаем только его и дочерние элементы
           required: false
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: Массив items
