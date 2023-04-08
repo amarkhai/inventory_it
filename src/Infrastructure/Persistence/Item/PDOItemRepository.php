@@ -34,12 +34,27 @@ class PDOItemRepository implements ItemRepositoryInterface
 
     /**
      * @inheritDoc
+     * @throws DomainWrongEntityParamException
      */
     public function findAllForUser(UuidInterface $userId, ?ItemIdValue $rootItemId = null): array
     {
         //@todo искать не только по owner_id, но и по тем, на которые есть права
-        //@todo переделать методы в один
-        return ($rootItemId) ? $this->findSubtree($userId, $rootItemId) : $this->findAllAvailable($userId);
+
+        $query = 'SELECT * FROM items WHERE owner_id=:owner_id';
+        $values = [':owner_id' => $userId];
+
+        if ($rootItemId) {
+            $query .= ' AND path <@ :root_item_id';
+            $values[':root_item_id'] = $rootItemId->getValue();
+        }
+
+        $stmt = $this->connection->prepare($query);
+        foreach ($values as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->execute();
+        return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
     }
 
     /**
@@ -99,24 +114,6 @@ class PDOItemRepository implements ItemRepositoryInterface
 
         $row['temporary_id'] = $temporaryId->toString();
         return (new CreatedItemMapDataMapper())->map($row);
-    }
-
-    private function findSubtree(UuidInterface $userId, ItemIdValue $rootItemId): array
-    {
-        $stmt = $this->connection
-            ->prepare('SELECT * FROM items WHERE owner_id=:owner_id AND path <@ :root_item_id');
-        $stmt->bindValue(':root_item_id', $rootItemId->getValue());
-        $stmt->bindValue(':owner_id', $userId);
-        $stmt->execute();
-        return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
-    }
-
-    private function findAllAvailable(UuidInterface $userId): array
-    {
-        $stmt = $this->connection->prepare('SELECT * FROM items WHERE owner_id=:owner_id');
-        $stmt->bindValue(':owner_id', $userId);
-        $stmt->execute();
-        return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
     }
 
     public function update(Item $item): bool

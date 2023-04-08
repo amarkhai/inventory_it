@@ -14,10 +14,13 @@ class PasswordHashValue implements ValueObjectInterface
 
     /**
      * @param string $password_hash
+     * @throws DomainWrongEntityParamException
      */
     public function __construct(string $password_hash)
     {
-        //@todo проверки хеша
+        if (mb_strlen($password_hash) != Constant::PASSWORD_HASH_LENGTH) {
+            throw new DomainWrongEntityParamException('Wrong password hash strlen');
+        }
         $this->value = $password_hash;
     }
 

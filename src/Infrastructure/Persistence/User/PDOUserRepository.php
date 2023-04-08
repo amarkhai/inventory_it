@@ -7,9 +7,7 @@ namespace App\Infrastructure\Persistence\User;
 use App\Domain\DataMapper\User\UserDataMapper;
 use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\User\User;
-use App\Domain\Entity\User\UserNotFoundException;
 use App\Domain\Repository\UserRepositoryInterface;
-use App\Domain\ValueObject\User\PasswordHashValue;
 use App\Domain\ValueObject\User\UserNameValue;
 use Ramsey\Uuid\UuidInterface;
 
@@ -61,10 +59,6 @@ class PDOUserRepository implements UserRepositoryInterface
         $stmt->bindValue(':created_at', $user->getCreatedAt()->format('Y-m-d H:i:s'));
 
         $stmt->execute();
-    }
-    public function delete(UuidInterface $id): void
-    {
-        // TODO: Implement delete() method.
     }
 
     /**
