@@ -12,4 +12,5 @@ class Constant
     public const USER_FIRST_AND_SECOND_NAME_MAX_LENGTH = 100;
     public const PASSWORD_MIN_LENGTH = 6;
     public const PASSWORD_MAX_LENGTH = 20;
+    public const PASSWORD_HASH_LENGTH = 60;
 }
