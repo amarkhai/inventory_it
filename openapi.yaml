@@ -328,9 +328,10 @@ components:
     PostItems_Item:
       type: object
       properties:
-        t_id:
+        temporary_id:
           type: string
-          example: 'abcdef'
+          format: uuid
+          example: '15224566-2b24-4a7b-892a-87b535ced7b4'
         name:
           type: string
           example: стеллаж

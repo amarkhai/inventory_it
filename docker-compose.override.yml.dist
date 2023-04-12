@@ -1,0 +1,14 @@
+version: '3'
+services:
+  # Для тестов
+  db_test:
+    image: 'postgres:15'
+    tmpfs: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=db_test
+    ports:
+      - "54321:5432"
+    networks:
+      - inventory_app_network
