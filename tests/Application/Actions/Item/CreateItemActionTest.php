@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Application\Actions\Item;
 
-use App\Application\Actions\ActionPayload;
 use App\Application\UseCase\Auth\JWTTokenCreator;
-use App\Domain\DataMapper\Item\CreatedItemMapDataMapper;
 use App\Domain\Entity\Item\Item;
-use App\Domain\Entity\Item\JustCreatedItemMap;
 use App\Domain\Entity\User\User;
 use App\Domain\Repository\ItemRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Item\ItemDescriptionValue;
 use App\Domain\ValueObject\Item\ItemIdValue;
 use App\Domain\ValueObject\Item\ItemNameValue;
-use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Item\ItemStatusEnum;
 use App\Domain\ValueObject\User\FirstNameValue;
 use App\Domain\ValueObject\User\LastNameValue;
@@ -81,7 +77,7 @@ class CreateItemActionTest extends TestCase
                 'temporary_id' => $temporaryId->toString(),
                 'name' => $item->getName(),
                 'description' => $item->getDescription(),
-                'parent_path' => '',// todo нужно ли добавлять ??!?!?!?
+                'parent_path' => '',
                 'rights' => [
                     [
                         'user' => [
