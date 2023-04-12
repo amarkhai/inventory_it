@@ -11,5 +11,4 @@ use Tests\TestCase;
  */
 class ListItemsActionTest extends TestCase
 {
-
 }
