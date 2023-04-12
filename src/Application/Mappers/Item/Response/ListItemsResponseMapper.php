@@ -32,7 +32,9 @@ class ListItemsResponseMapper implements MapperInterface
                 $item->getName()->getValue(),
                 $item->getDescription()?->getValue(),
                 $item->getPath()->getValue(),
-                $item->getOwnerId()->toString()
+                $item->getOwnerId()->toString(),
+                $item->getCreatedAt()?->format('Y-m-d H:i:s'),
+                $item->getUpdatedAt()?->format('Y-m-d H:i:s'),
             );
         }, $this->items);
     }

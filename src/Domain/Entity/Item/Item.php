@@ -10,6 +10,7 @@ use App\Domain\ValueObject\Item\ItemNameValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Item\ItemStatusEnum;
 use App\Domain\ValueObject\Right\RightTypeEnum;
+use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 
 class Item
@@ -20,7 +21,9 @@ class Item
         private ItemStatusEnum $status,
         private UuidInterface $owner_id,
         private ItemNameValue $name,
-        private ?ItemDescriptionValue $description
+        private ?ItemDescriptionValue $description,
+        private ?DateTimeImmutable $created_at = null,
+        private ?DateTimeImmutable $updated_at = null,
     ) {
     }
 
@@ -120,5 +123,37 @@ class Item
     public function setDescription(?ItemDescriptionValue $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return DateTimeImmutable|null
+     */
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @param DateTimeImmutable|null $created_at
+     */
+    public function setCreatedAt(?DateTimeImmutable $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    /**
+     * @return DateTimeImmutable|null
+     */
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @param DateTimeImmutable|null $updated_at
+     */
+    public function setUpdatedAt(?DateTimeImmutable $updated_at): void
+    {
+        $this->updated_at = $updated_at;
     }
 }

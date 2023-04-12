@@ -13,6 +13,7 @@ use App\Domain\Entity\Item\JustCreatedItemMap;
 use App\Domain\Repository\ItemRepositoryInterface;
 use App\Domain\ValueObject\Item\ItemIdValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
+use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 
 class PDOItemRepository implements ItemRepositoryInterface
@@ -132,7 +133,8 @@ class PDOItemRepository implements ItemRepositoryInterface
                 name=:name,
                 description=:description,
                 status=:status,
-                path=(:path)::ltree
+                path=(:path)::ltree,
+                updated_at=:updated_at
             WHERE id=:id
         ');
         $stmt->bindValue(':id', $item->getId()->getValue());
@@ -140,6 +142,7 @@ class PDOItemRepository implements ItemRepositoryInterface
         $stmt->bindValue(':description', $item->getDescription()?->getValue());
         $stmt->bindValue(':path', $item->getPath()->getValue());
         $stmt->bindValue(':status', $item->getStatus()->getValue());
+        $stmt->bindValue(':updated_at', (new DateTimeImmutable())->format('Y-m-d H:i:s'));
         return $stmt->execute();
     }
 

@@ -32,7 +32,9 @@ class ViewItemResponseMapper implements MapperInterface
             $this->item->getName()->getValue(),
             $this->item->getDescription()?->getValue(),
             $this->item->getPath()->getValue(),
-            $this->item->getOwnerId()->toString()
+            $this->item->getOwnerId()->toString(),
+            $this->item->getCreatedAt()?->format('Y-m-d H:i:s'),
+            $this->item->getUpdatedAt()?->format('Y-m-d H:i:s'),
         );
     }
 }
