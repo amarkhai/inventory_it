@@ -3,7 +3,7 @@
 namespace App\Application\UseCase\Item;
 
 use App\Application\DTO\Request\Item\ListItemsRequestDTO;
-use App\Application\DTO\Response\Item\ListItemResponseDTO;
+use App\Application\DTO\Response\Item\ListItemsResponseDTO;
 use App\Application\Mappers\Item\Response\ListItemsResponseMapper;
 use App\Application\UseCase\ActionUseCaseInterface;
 use App\Domain\DomainException\DomainWrongEntityParamException;
@@ -21,7 +21,7 @@ class ListItemsUseCase implements ActionUseCaseInterface
 
     /**
      * @param ListItemsRequestDTO $dto
-     * @return ListItemResponseDTO[]
+     * @return ListItemsResponseDTO[]
      * @throws DomainWrongEntityParamException
      */
     public function __invoke(ListItemsRequestDTO $dto): array

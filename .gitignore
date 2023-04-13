@@ -13,7 +13,7 @@ docker-compose.override.yml
 docker/postgresql_data/
 
 # Данные ElasticSearch
-docker/es_data/
+docker/elasticsearch/es_data/
 
 # composer
 vendor/

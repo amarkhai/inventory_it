@@ -37,7 +37,7 @@ class FillFakesCommand extends Command
         private readonly UserRepositoryInterface $userRepository,
         private readonly ItemRepositoryInterface $itemRepository
     ) {
-        $this->faker = Factory::create();
+        $this->faker = Factory::create('ru_RU');
         parent::__construct();
     }
 
@@ -130,7 +130,7 @@ class FillFakesCommand extends Command
             ItemStatusEnum::active,
             $ownerId,
             new ItemNameValue($this->faker->name),
-            new ItemDescriptionValue($this->faker->text)
+            new ItemDescriptionValue($this->faker->realText)
         );
         $itemMap = $this->itemRepository->insert(
             $item,

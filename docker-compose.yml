@@ -49,9 +49,21 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - cluster.name=inventory-cluster
     volumes:
-      - ./docker/es_data:/usr/share/elasticsearch/data
+      - ./docker/elasticsearch/es_data:/usr/share/elasticsearch/data
     ports:
       - "${ELASTIC_PORT}:9200"
+    networks:
+      - inventory_app_network
+
+  elasticsearch-seed:
+    container_name: inventory_app_es_seed
+    build: ./docker/elasticsearch/seed
+#    image: richardsilveira/elasticsearch-seed
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - INDEX_NAME=items
+      - USER=elastic
+      - PASSWORD=${ELASTIC_PASSWORD}
     networks:
       - inventory_app_network
 
@@ -87,6 +99,7 @@ services:
     depends_on:
       - db
       - elasticsearch
+      - elasticsearch-seed
     networks:
       - inventory_app_network
 

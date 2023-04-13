@@ -6,7 +6,7 @@ namespace App\Application\DTO\Response\Item;
 
 use App\Application\DTO\Response\ResponseDTO;
 
-class ListItemResponseDTO extends ResponseDTO
+class ListItemsResponseDTO extends ResponseDTO
 {
     public function __construct(
         private readonly int $id,
