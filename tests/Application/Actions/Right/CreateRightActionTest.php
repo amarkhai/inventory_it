@@ -101,7 +101,8 @@ class CreateRightActionTest extends TestCase
 
         $token = $jwtTokenCreator->createForUser($user1);
 
-        // формируем второй запрос для корректного item ("корректный" - принадлежащий пользователю, который делает запрос)
+        // формируем второй запрос для корректного item ("корректный" - принадлежащий пользователю, который делает
+        // запрос)
         $requestBody = [
             'id' => Uuid::uuid4()->toString(),
             'path' => $savedItem1->getId()->getValue(),

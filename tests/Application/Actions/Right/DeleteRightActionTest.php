@@ -120,7 +120,8 @@ class DeleteRightActionTest extends TestCase
 
         // Отправляем запрос на удаление right, принадлежащего тому пользователю, который отправляет запрос
         $token = $jwtTokenCreator->createForUser($user1);
-        // формируем второй запрос для корректного item ("корректный" - принадлежащий пользователю, который делает запрос)
+        // формируем второй запрос для корректного item ("корректный" - принадлежащий пользователю, который делает
+        // запрос)
         $request = $this->createRequest('DELETE', '/rights/' . $right1->getId()->toString())
             ->withHeader('Authorization', 'Bearer ' . $token->toString())
         ;
