@@ -60,8 +60,6 @@ class CreateItemActionTest extends TestCase
         $token = $jwtTokenCreator->createForUser($user);
 
         $temporaryId = Uuid::uuid4();
-        $userEmail = $this->faker->email();
-        $type = \random_int(1, 10) > 5 ? 'ro' : 'rw';
 
         $item = new Item(
             null,
@@ -78,14 +76,6 @@ class CreateItemActionTest extends TestCase
                 'name' => $item->getName(),
                 'description' => $item->getDescription(),
                 'parent_path' => '',
-                'rights' => [
-                    [
-                        'user' => [
-                            'email' => $userEmail,
-                        ],
-                        'type' => $type,
-                    ]
-                ],
             ])
             ->withHeader('Content-Type', 'application/json')
             ->withHeader('Authorization', 'Bearer ' . $token->toString())
