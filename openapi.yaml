@@ -341,29 +341,6 @@ components:
         parent_path:
           type: string
           example: 'abcdefds.fdsvfd.svdfv'
-        rights:
-          type: array
-          items:
-            $ref: '#/components/schemas/PostItems_Item_Right'
-    PostItems_Item_Right:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/PostItems_Item_Right_User'
-        type:
-          type: string
-          example: ro
-          enum:
-            - ro
-            - rw
-    PostItems_Item_Right_User:
-      type: object
-      properties:
-        email:
-          type: string
-          example: vasya@email.com
-
-
 
     PutItems_Item:
       type: object
