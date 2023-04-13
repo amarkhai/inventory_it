@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use DI\ContainerBuilder;
+use Dotenv\Dotenv;
 use Exception;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -26,6 +27,14 @@ class TestCase extends PHPUnit_TestCase
      */
     protected function getAppInstance(): App
     {
+        if (!\file_exists(__DIR__ . '/../.env.testing')) {
+            throw new \RuntimeException('Файл .env.testing не найден в корне проекта');
+        }
+
+        // Load ENV variables
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/..', '.env.testing');
+        $dotenv->load();
+
         // Instantiate PHP-DI ContainerBuilder
         $containerBuilder = new ContainerBuilder();
 

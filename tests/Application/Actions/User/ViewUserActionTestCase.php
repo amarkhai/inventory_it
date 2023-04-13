@@ -14,7 +14,7 @@ use DI\Container;
 use Slim\Middleware\ErrorMiddleware;
 use Tests\TestCase;
 
-class ViewUserActionTest extends TestCase
+class ViewUserActionTestCase extends TestCase
 {
     public function testAction()
     {

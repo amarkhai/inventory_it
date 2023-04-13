@@ -10,7 +10,7 @@ use App\Domain\Repository\UserRepositoryInterface;
 use DI\Container;
 use Tests\TestCase;
 
-class ListUserActionTest extends TestCase
+class ListUserActionTestCase extends TestCase
 {
     public function testAction()
     {

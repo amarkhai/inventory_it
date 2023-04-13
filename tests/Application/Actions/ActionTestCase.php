@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
-class ActionTest extends TestCase
+class ActionTestCase extends TestCase
 {
     public function testActionSetsHttpCodeInRespond()
     {

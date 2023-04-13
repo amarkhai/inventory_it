@@ -328,9 +328,10 @@ components:
     PostItems_Item:
       type: object
       properties:
-        t_id:
+        temporary_id:
           type: string
-          example: 'abcdef'
+          format: uuid
+          example: '15224566-2b24-4a7b-892a-87b535ced7b4'
         name:
           type: string
           example: стеллаж
@@ -340,29 +341,6 @@ components:
         parent_path:
           type: string
           example: 'abcdefds.fdsvfd.svdfv'
-        rights:
-          type: array
-          items:
-            $ref: '#/components/schemas/PostItems_Item_Right'
-    PostItems_Item_Right:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/PostItems_Item_Right_User'
-        type:
-          type: string
-          example: ro
-          enum:
-            - ro
-            - rw
-    PostItems_Item_Right_User:
-      type: object
-      properties:
-        email:
-          type: string
-          example: vasya@email.com
-
-
 
     PutItems_Item:
       type: object
@@ -446,7 +424,7 @@ components:
           type: string
           format: uuid
           example: 3422b448-2460-4fd2-9183-8000de6f8343
-        item_id:
+        path:
           type: integer
           example: 1454
         user_id:
