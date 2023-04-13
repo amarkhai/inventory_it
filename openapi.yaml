@@ -424,7 +424,7 @@ components:
           type: string
           format: uuid
           example: 3422b448-2460-4fd2-9183-8000de6f8343
-        item_id:
+        path:
           type: integer
           example: 1454
         user_id:

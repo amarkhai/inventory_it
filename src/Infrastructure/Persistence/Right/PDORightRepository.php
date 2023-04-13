@@ -26,7 +26,7 @@ class PDORightRepository implements RightRepositoryInterface
     {
         $stmt = $this->connection->prepare('
             INSERT INTO public.rights (id, path, user_id, type)
-            VALUES (:id, :item_id, :user_id, :type)
+            VALUES (:id, :path, :user_id, :type)
         ');
         $stmt->bindValue(':id', $right->getId());
         $stmt->bindValue(':path', $right->getPath());
