@@ -224,7 +224,7 @@ paths:
         '403':
           description: Нет прав
 
-  /items/find-by-term:
+  /items/search:
     get:
       tags:
         - items
@@ -238,11 +238,11 @@ paths:
             type: string
       responses:
         '200':
-          description: Отдаем items с полным указанием места нахождения
+          description: Отдаем частичные данные по items
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetItemsFyndByTerm_Item'
+                $ref: '#/components/schemas/GetItemsFindByTerm_Item'
         '401':
           description: Не авторизован
         '403':
@@ -395,7 +395,7 @@ components:
           type: string
           example: vasya@email.com
 
-    GetItemsFyndByTerm_Item:
+    GetItemsFindByTerm_Item:
       type: object
       properties:
         id:
@@ -408,14 +408,14 @@ components:
         description:
           type: string
           example: стеллаж
-        path:
-          type: string
-          example: '12.15.134'
-        path_names:
-          type: array
-          items:
-            type: string
-          example: ['Дом', 'Комната', 'Шкаф']
+#        path:
+#          type: string
+#          example: '12.15.134'
+#        path_names:
+#          type: array
+#          items:
+#            type: string
+#          example: ['Дом', 'Комната', 'Шкаф']
 
     Right:
       type: object
