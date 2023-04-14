@@ -6,6 +6,7 @@ use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
+use App\Domain\Entity\Item\PartialItem;
 use App\Domain\Repository\ItemRepositoryInterface;
 use App\Domain\Repository\ItemSearchRepositoryInterface;
 use App\Domain\Repository\RightRepositoryInterface;
@@ -42,7 +43,7 @@ class ItemInteractor
     /**
      * @param UuidInterface $userId
      * @param ItemSearchTermValue $term
-     * @return ItemIdValue[]
+     * @return PartialItem[]
      */
     public function searchAvailableForUser(
         UuidInterface $userId,

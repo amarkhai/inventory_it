@@ -26,6 +26,11 @@ return function (ContainerBuilder $containerBuilder) {
                     'user' => $_ENV['DB_USER'],
                     'password' => $_ENV['DB_PASSWORD'],
                 ],
+                'es' => [
+                    'host' => 'http://' . $_ENV['ELASTIC_HOST'] . ':' . $_ENV['ELASTIC_PORT'],
+                    'user' => 'elastic',
+                    'password' => $_ENV['ELASTIC_PASSWORD'],
+                ],
                 'JWT' => [
                     'token_expiration_time' => $_ENV['JWT_TOKEN_EXPIRATION_TIME'],
                     'secret' => $_ENV['JWT_SECRET'],

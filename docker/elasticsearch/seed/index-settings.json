@@ -37,7 +37,10 @@
         "analyzer": "my_russian"
       },
       "owner_id": {
-        "type": "text"
+        "type": "keyword"
+      },
+      "status": {
+        "type": "keyword"
       },
       "updated_at": {
         "type": "date_nanos"

@@ -17,6 +17,7 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "doctrine/migrations": "^3.6",
+        "elasticsearch/elasticsearch": "^8.7",
         "lcobucci/jwt": "^5.0",
         "monolog/monolog": "^2.9",
         "php-di/php-di": "^6.4",
@@ -41,7 +42,8 @@
     },
     "config": {
         "allow-plugins": {
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "php-http/discovery": true
         },
         "process-timeout": 0,
         "sort-packages": true

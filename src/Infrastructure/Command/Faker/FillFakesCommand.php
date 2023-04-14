@@ -129,7 +129,7 @@ class FillFakesCommand extends Command
             null,
             ItemStatusEnum::active,
             $ownerId,
-            new ItemNameValue($this->faker->name),
+            new ItemNameValue($this->faker->realText(30)),
             new ItemDescriptionValue($this->faker->realText)
         );
         $itemMap = $this->itemRepository->insert(

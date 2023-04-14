@@ -8,6 +8,9 @@ use App\Application\Settings\SettingsInterface;
 use App\Application\UseCase\Auth\JWTTokenCreator;
 use App\Domain\Repository\UserRepositoryInterface;
 use DI\ContainerBuilder;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientInterface;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Token\Parser;
@@ -53,6 +56,16 @@ return function (ContainerBuilder $containerBuilder) {
             $pdo = new PDO($dbSettings['dsn'], $dbSettings['user'], $dbSettings['password']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $pdo;
+        },
+        Client::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+            /** @var array{host: string, user: string, password: string} $esSettings */
+            $esSettings = $settings->get('es');
+
+            return ClientBuilder::create()
+                ->setHosts([$esSettings['host']])
+                ->setBasicAuthentication($esSettings['user'], $esSettings['password'])
+                ->build();
         },
         JWTTokenCreator::class => function (ContainerInterface $c) {
             $settings = $settings = $c->get(SettingsInterface::class);
