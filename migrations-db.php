@@ -1,7 +1,11 @@
 <?php
 use Doctrine\DBAL\DriverManager;
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ );
+if ($_ENV['ENV'] === 'TESTING') {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__, '.env.testing');
+} else {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ );
+}
 $dotenv->load();
 
 return DriverManager::getConnection([
