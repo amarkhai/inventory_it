@@ -6,7 +6,7 @@ namespace App\Application\DTO\Response\Item;
 
 use App\Application\DTO\Response\ResponseDTO;
 
-class ListItemResponseDTO extends ResponseDTO
+class ListItemsResponseDTO extends ResponseDTO
 {
     public function __construct(
         private readonly int $id,
@@ -14,6 +14,8 @@ class ListItemResponseDTO extends ResponseDTO
         private readonly ?string $description,
         private readonly string $path,
         private readonly string $owner_id,
+        private readonly ?string $created_at,
+        private readonly ?string $updated_at,
     ) {
     }
 
@@ -57,6 +59,22 @@ class ListItemResponseDTO extends ResponseDTO
         return $this->owner_id;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getCreatedAt(): ?string
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUpdatedAt(): ?string
+    {
+        return $this->updated_at;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -65,6 +83,8 @@ class ListItemResponseDTO extends ResponseDTO
             'description' => $this->getDescription(),
             'path' => $this->getPath(),
             'owner_id' => $this->getOwnerId(),
+            'created_at' => $this->getCreatedAt(),
+            'updated_at' => $this->getUpdatedAt(),
         ];
     }
 }

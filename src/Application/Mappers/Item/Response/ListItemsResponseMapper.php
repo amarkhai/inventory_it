@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Mappers\Item\Response;
 
-use App\Application\DTO\Response\Item\ListItemResponseDTO;
+use App\Application\DTO\Response\Item\ListItemsResponseDTO;
 use App\Application\Mappers\MapperInterface;
 use App\Domain\Entity\Item\Item;
 
@@ -27,12 +27,14 @@ class ListItemsResponseMapper implements MapperInterface
     {
         //@todo отдавать права юзера на item
         return array_map(function ($item) {
-            return new ListItemResponseDTO(
+            return new ListItemsResponseDTO(
                 $item->getId()->getValue(),
                 $item->getName()->getValue(),
                 $item->getDescription()?->getValue(),
                 $item->getPath()->getValue(),
-                $item->getOwnerId()->toString()
+                $item->getOwnerId()->toString(),
+                $item->getCreatedAt()?->format('Y-m-d H:i:s'),
+                $item->getUpdatedAt()?->format('Y-m-d H:i:s'),
             );
         }, $this->items);
     }

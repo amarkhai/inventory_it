@@ -6,11 +6,13 @@ use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
-use App\Domain\Entity\Right\Right;
+use App\Domain\Entity\Item\PartialItem;
 use App\Domain\Repository\ItemRepositoryInterface;
+use App\Domain\Repository\ItemSearchRepositoryInterface;
 use App\Domain\Repository\RightRepositoryInterface;
 use App\Domain\ValueObject\Item\ItemIdValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
+use App\Domain\ValueObject\Item\ItemSearchTermValue;
 use App\Domain\ValueObject\Right\RightTypeEnum;
 use Ramsey\Uuid\UuidInterface;
 
@@ -18,6 +20,7 @@ class ItemInteractor
 {
     public function __construct(
         protected ItemRepositoryInterface $itemRepository,
+        protected ItemSearchRepositoryInterface $itemSearchRepository,
         protected RightRepositoryInterface $rightRepository
     ) {
     }
@@ -35,6 +38,18 @@ class ItemInteractor
             $userId,
             $rootItemPath
         );
+    }
+
+    /**
+     * @param UuidInterface $userId
+     * @param ItemSearchTermValue $term
+     * @return PartialItem[]
+     */
+    public function searchAvailableForUser(
+        UuidInterface $userId,
+        ItemSearchTermValue $term
+    ): array {
+        return $this->itemSearchRepository->searchAllForUser($userId, $term);
     }
 
     /**

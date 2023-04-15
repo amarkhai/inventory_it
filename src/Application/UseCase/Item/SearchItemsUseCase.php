@@ -2,34 +2,32 @@
 
 namespace App\Application\UseCase\Item;
 
-use App\Application\DTO\Request\Item\ListItemsRequestDTO;
+use App\Application\DTO\Request\Item\SearchItemsRequestDTO;
 use App\Application\DTO\Response\Item\ListItemsResponseDTO;
-use App\Application\Mappers\Item\Response\ListItemsResponseMapper;
+use App\Application\Mappers\Item\Response\ListPartialItemsResponseMapper;
 use App\Application\UseCase\ActionUseCaseInterface;
 use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Interactor\ItemInteractor;
-use App\Domain\ValueObject\Item\ItemIdValue;
-use App\Domain\ValueObject\Item\ItemPathValue;
+use App\Domain\ValueObject\Item\ItemSearchTermValue;
 
-class ListItemsUseCase implements ActionUseCaseInterface
+class SearchItemsUseCase implements ActionUseCaseInterface
 {
     public function __construct(
-        private readonly ListItemsResponseMapper $responseMapper,
+        private readonly ListPartialItemsResponseMapper $responseMapper,
         private readonly ItemInteractor $interactor
     ) {
     }
 
     /**
-     * @param ListItemsRequestDTO $dto
+     * @param SearchItemsRequestDTO $dto
      * @return ListItemsResponseDTO[]
      * @throws DomainWrongEntityParamException
      */
-    public function __invoke(ListItemsRequestDTO $dto): array
+    public function __invoke(SearchItemsRequestDTO $dto): array
     {
-        $rootItemPath = $dto->getRootItemPath();
-        $items = $this->interactor->listAvailableForUser(
+        $items = $this->interactor->searchAvailableForUser(
             $dto->getRequesterid(),
-            $rootItemPath ? new ItemPathValue($rootItemPath) : null
+            new ItemSearchTermValue($dto->getTerm())
         );
 
         $this->responseMapper->setItems($items);

@@ -6,6 +6,7 @@ use App\Application\Actions\Auth\Token\AccessTokenByPasswordAction;
 use App\Application\Actions\DefaultAction;
 use App\Application\Actions\Item\CreateItemAction;
 use App\Application\Actions\Item\ListItemsAction;
+use App\Application\Actions\Item\SearchItemsAction;
 use App\Application\Actions\Item\UpdateItemAction;
 use App\Application\Actions\Item\ViewItemAction;
 use App\Application\Actions\Right\CreateRightAction;
@@ -39,6 +40,7 @@ return function (App $app) {
 
     $app->group('/items', function (Group $group) {
         $group->get('', ListItemsAction::class);
+        $group->get('/search', SearchItemsAction::class);
         $group->post('', CreateItemAction::class);
         $group->get('/{id}', ViewItemAction::class);
         $group->put('/{id}', UpdateItemAction::class);

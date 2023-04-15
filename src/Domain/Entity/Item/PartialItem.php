@@ -9,18 +9,17 @@ use App\Domain\ValueObject\Item\ItemIdValue;
 use App\Domain\ValueObject\Item\ItemNameValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
 use App\Domain\ValueObject\Item\ItemStatusEnum;
-use App\Domain\ValueObject\Right\RightTypeEnum;
 use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 
-class Item
+class PartialItem
 {
     public function __construct(
         private ?ItemIdValue $id,
         private ?ItemPathValue $path,
-        private ItemStatusEnum $status,
-        private UuidInterface $owner_id,
-        private ItemNameValue $name,
+        private ?ItemStatusEnum $status,
+        private ?UuidInterface $owner_id,
+        private ?ItemNameValue $name,
         private ?ItemDescriptionValue $description,
         private ?DateTimeImmutable $created_at = null,
         private ?DateTimeImmutable $updated_at = null,
@@ -30,7 +29,6 @@ class Item
     /**
      * @return ItemIdValue|null
      */
-    /** @psalm-ignore-nullable-return */
     public function getId(): ?ItemIdValue
     {
         return $this->id;
@@ -47,7 +45,6 @@ class Item
     /**
      * @return ItemPathValue|null
      */
-    /** @psalm-ignore-nullable-return */
     public function getPath(): ?ItemPathValue
     {
         return $this->path;
@@ -62,49 +59,49 @@ class Item
     }
 
     /**
-     * @return ItemStatusEnum
+     * @return ItemStatusEnum|null
      */
-    public function getStatus(): ItemStatusEnum
+    public function getStatus(): ?ItemStatusEnum
     {
         return $this->status;
     }
 
     /**
-     * @param ItemStatusEnum $status
+     * @param ItemStatusEnum|null $status
      */
-    public function setStatus(ItemStatusEnum $status): void
+    public function setStatus(?ItemStatusEnum $status): void
     {
         $this->status = $status;
     }
 
     /**
-     * @return UuidInterface
+     * @return UuidInterface|null
      */
-    public function getOwnerId(): UuidInterface
+    public function getOwnerId(): ?UuidInterface
     {
         return $this->owner_id;
     }
 
     /**
-     * @param UuidInterface $owner_id
+     * @param UuidInterface|null $owner_id
      */
-    public function setOwnerId(UuidInterface $owner_id): void
+    public function setOwnerId(?UuidInterface $owner_id): void
     {
         $this->owner_id = $owner_id;
     }
 
     /**
-     * @return ItemNameValue
+     * @return ItemNameValue|null
      */
-    public function getName(): ItemNameValue
+    public function getName(): ?ItemNameValue
     {
         return $this->name;
     }
 
     /**
-     * @param ItemNameValue $name
+     * @param ItemNameValue|null $name
      */
-    public function setName(ItemNameValue $name): void
+    public function setName(?ItemNameValue $name): void
     {
         $this->name = $name;
     }
