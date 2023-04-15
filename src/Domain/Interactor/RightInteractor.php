@@ -51,7 +51,7 @@ class RightInteractor
             throw new DomainWrongEntityParamException('User does not exists.');
         }
 
-        $savedRight = $this->rightRepository->findOneForUserByPath($requesterId, $right->getPath());
+        $savedRight = $this->rightRepository->findOneForUserByPath($right->getUserId(), $right->getPath());
         if ($savedRight) {
             throw new DomainWrongEntityParamException('Right for this user and item already exists.');
         }
