@@ -2,7 +2,9 @@
 
 namespace App\Domain\Interactor;
 
+use App\Domain\Constant\Constant;
 use App\Domain\DomainException\DomainWrongEntityParamException;
+use App\Domain\DTO\ItemsWithTotalCount;
 use App\Domain\Entity\Item\Item;
 use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
@@ -21,23 +23,41 @@ class ItemInteractor
     public function __construct(
         protected ItemRepositoryInterface $itemRepository,
         protected ItemSearchRepositoryInterface $itemSearchRepository,
-        protected RightRepositoryInterface $rightRepository
+        protected RightRepositoryInterface $rightRepository,
     ) {
     }
 
     /**
      * @param UuidInterface $userId
      * @param ItemPathValue|null $rootItemPath
-     * @return Item[]
+     * @param int $offset
+     * @param int $limit
+     * @return ItemsWithTotalCount
      */
     public function listAvailableForUser(
         UuidInterface $userId,
-        ?ItemPathValue $rootItemPath
-    ): array {
-        return $this->itemRepository->findAllForUser(
+        ?ItemPathValue $rootItemPath,
+        int $offset = 0,
+        int $limit = 20,
+    ): ItemsWithTotalCount {
+
+        if ($limit > Constant::MAX_ITEMS_QUERY_LIMIT) {
+            throw new \DomainException('Too big limit.');
+        }
+
+        $totalCount = $this->itemRepository->countAllForUser(
             $userId,
             $rootItemPath
         );
+
+        $items = $totalCount > 0 ? $this->itemRepository->findAllForUser(
+            $userId,
+            $rootItemPath,
+            $offset,
+            $limit
+        ) : [];
+
+        return new ItemsWithTotalCount($items, $totalCount);
     }
 
     /**

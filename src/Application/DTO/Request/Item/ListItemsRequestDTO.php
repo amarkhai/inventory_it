@@ -14,10 +14,17 @@ class ListItemsRequestDTO extends AuthenticatedRequestDTO
     #[Assert\Regex(Constant::ITEM_PATH_REGEX)]
     private ?string $root_item_path;
 
+    #[Assert\NotBlank]
+    #[Assert\Type("int")]
+    #[Assert\GreaterThan(0)]
+    private int $page;
+
     public function setValues(): void
     {
         parent::setValues();
         $this->root_item_path = $this->getBodyParam('root_item_path');
+        $page = $this->getBodyParam('page');
+        $this->page = is_numeric($page) ? (int) $page : 1;
     }
 
     /**
@@ -26,5 +33,13 @@ class ListItemsRequestDTO extends AuthenticatedRequestDTO
     public function getRootItemPath(): ?string
     {
         return $this->root_item_path;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPage(): int
+    {
+        return $this->page;
     }
 }

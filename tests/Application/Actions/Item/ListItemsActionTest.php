@@ -116,6 +116,8 @@ class ListItemsActionTest extends TestCase
 
         $statusCodeAfterInserting = $payload['statusCode'];
         $itemsInResponseAfterInserting = $payload['data'];
+        $xTotalCountAfterInserting = $response->getHeaderLine('X-Total-Count');
+        //@todo покрыть тестами пагинацию
 
         // Код ответа в обоих запросах должен быть 200
         $this->assertEquals(200, $statusCodeBeforeInserting);
@@ -124,8 +126,10 @@ class ListItemsActionTest extends TestCase
         // До добавления items в БД при запросе должен вернуться пустой список items
         $this->assertCount(0, $itemsInResponseBeforeInserting);
 
-        // После добавления должен появиться один item
+        // После добавления должен появиться один item в ответе
         $this->assertCount(1, $itemsInResponseAfterInserting);
+        // ... и в заголовке X-Total-Count
+        $this->assertEquals(1, $xTotalCountAfterInserting);
 
         // И этот item должен быть именно тем, у которого owner_id - пользователь, отправивший запрос
         // Второй item не должен появиться в ответе

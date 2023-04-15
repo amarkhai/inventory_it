@@ -74,14 +74,6 @@ abstract class Action
         return $this->respond($payload);
     }
 
-
-    protected function respondWithViolations(array $violations, int $statusCode = 400): Response
-    {
-        $payload = new ActionPayload($statusCode, ['violations' => $violations]);
-
-        return $this->respond($payload);
-    }
-
     /**
      * @throws \JsonException
      */
@@ -95,10 +87,5 @@ abstract class Action
         return $this->response
                     ->withHeader('Content-Type', 'application/json')
                     ->withStatus($payload->getStatusCode());
-    }
-
-    protected function validateRequestDTO(RequestDTO $requestDTO): array
-    {
-        return $this->requestValidator->validate($requestDTO);
     }
 }

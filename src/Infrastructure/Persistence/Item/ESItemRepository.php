@@ -51,6 +51,7 @@ class ESItemRepository extends ESRepository implements ItemSearchRepositoryInter
                 "minimum_should_match" => 1
             ]
         ];
+        //@todo добавить поле со списком пользователей, у которых есть доступ к поиску и искать с учетом его
 
         return array_map(
             fn ($row) => (new PartialItemDataMapper())->map($row['_source']),

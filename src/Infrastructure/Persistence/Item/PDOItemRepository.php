@@ -8,7 +8,6 @@ use App\Domain\DataMapper\Item\CreatedItemMapDataMapper;
 use App\Domain\DataMapper\Item\ItemDataMapper;
 use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Entity\Item\Item;
-use App\Domain\Entity\Item\ItemNotFoundException;
 use App\Domain\Entity\Item\JustCreatedItemMap;
 use App\Domain\Repository\ItemRepositoryInterface;
 use App\Domain\ValueObject\Item\ItemIdValue;
@@ -19,27 +18,48 @@ use Ramsey\Uuid\UuidInterface;
 class PDOItemRepository implements ItemRepositoryInterface
 {
     public function __construct(
-        private \PDO $connection
+        private readonly \PDO $connection
     ) {
-    }
-
-    /**
-     * @return Item[]
-     */
-    public function findAll(): array
-    {
-        $stmt = $this->connection->prepare('SELECT * FROM items');
-        $stmt->execute();
-        return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
     }
 
     /**
      * @inheritDoc
      * @throws DomainWrongEntityParamException
      */
-    public function findAllForUser(UuidInterface $userId, ?ItemPathValue $rootItemPath = null): array
-    {
+    public function findAllForUser(
+        UuidInterface $userId,
+        ?ItemPathValue $rootItemPath = null,
+        int $offset = 0,
+        int $limit = 20
+    ): array {
         $query = 'SELECT * FROM items WHERE 
+                    (
+                        owner_id=:user_id 
+                        OR path <@ ARRAY(select path from rights where user_id = :user_id)
+                    )';
+        $values = [':user_id' => $userId];
+
+        if ($rootItemPath) {
+            $query .= ' AND path <@ :root_item_path';
+            $values[':root_item_path'] = $rootItemPath->getValue();
+        }
+
+        $query .= " ORDER BY name LIMIT $limit OFFSET $offset";
+
+        $stmt = $this->connection->prepare($query);
+        foreach ($values as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->execute();
+        return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
+    }
+
+    public function countAllForUser(
+        UuidInterface $userId,
+        ?ItemPathValue $rootItemPath = null
+    ): int {
+        $query = 'SELECT count(*) as totalCount FROM items WHERE 
                     (
                         owner_id=:user_id 
                         OR path <@ ARRAY(select path from rights where user_id = :user_id)
@@ -57,7 +77,7 @@ class PDOItemRepository implements ItemRepositoryInterface
         }
 
         $stmt->execute();
-        return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
+        return (int) $stmt->fetchColumn();
     }
 
     /**
@@ -79,18 +99,6 @@ class PDOItemRepository implements ItemRepositoryInterface
         $row = $stmt->fetch();
 
         return $row ? (new ItemDataMapper())->map($row) : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function findAllForUserByTerm(UuidInterface $userId, string $term): array
-    {
-        //@todo сделать
-        $stmt = $this->connection->prepare('SELECT * FROM items WHERE owner_id=:owner_id');
-        $stmt->bindValue(':owner_id', $userId);
-        $stmt->execute();
-        return array_map(fn ($row) => (new ItemDataMapper())->map($row), $stmt->fetchAll());
     }
 
     /**

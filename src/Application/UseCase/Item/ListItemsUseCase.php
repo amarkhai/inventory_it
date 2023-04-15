@@ -3,12 +3,11 @@
 namespace App\Application\UseCase\Item;
 
 use App\Application\DTO\Request\Item\ListItemsRequestDTO;
-use App\Application\DTO\Response\Item\ListItemsResponseDTO;
+use App\Application\DTO\Response\DataWithTotalCountResponseDTO;
 use App\Application\Mappers\Item\Response\ListItemsResponseMapper;
 use App\Application\UseCase\ActionUseCaseInterface;
 use App\Domain\DomainException\DomainWrongEntityParamException;
 use App\Domain\Interactor\ItemInteractor;
-use App\Domain\ValueObject\Item\ItemIdValue;
 use App\Domain\ValueObject\Item\ItemPathValue;
 
 class ListItemsUseCase implements ActionUseCaseInterface
@@ -21,18 +20,24 @@ class ListItemsUseCase implements ActionUseCaseInterface
 
     /**
      * @param ListItemsRequestDTO $dto
-     * @return ListItemsResponseDTO[]
+     * @return DataWithTotalCountResponseDTO
      * @throws DomainWrongEntityParamException
      */
-    public function __invoke(ListItemsRequestDTO $dto): array
+    public function __invoke(ListItemsRequestDTO $dto): DataWithTotalCountResponseDTO
     {
         $rootItemPath = $dto->getRootItemPath();
-        $items = $this->interactor->listAvailableForUser(
+        $itemsOnPage = 20;
+        $offset = ($dto->getPage() - 1) * $itemsOnPage;
+
+        $itemsWithCount = $this->interactor->listAvailableForUser(
             $dto->getRequesterid(),
-            $rootItemPath ? new ItemPathValue($rootItemPath) : null
+            $rootItemPath ? new ItemPathValue($rootItemPath) : null,
+            $offset,
+            $itemsOnPage
         );
 
-        $this->responseMapper->setItems($items);
+        $this->responseMapper->setItems($itemsWithCount->getData());
+        $this->responseMapper->setTotalCount($itemsWithCount->getTotalCount());
         return $this->responseMapper->map();
     }
 }

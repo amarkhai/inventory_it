@@ -13,4 +13,5 @@ class Constant
     public const PASSWORD_MIN_LENGTH = 6;
     public const PASSWORD_MAX_LENGTH = 20;
     public const PASSWORD_HASH_LENGTH = 60;
+    public const MAX_ITEMS_QUERY_LIMIT = 100;
 }
