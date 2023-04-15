@@ -33,11 +33,6 @@ return function (App $app) {
         $group->post('/access-token', AccessTokenByPasswordAction::class);
     });
 
-    $app->group('/users', function (Group $group) {
-        $group->get('', ListUsersAction::class);
-        $group->get('/{id}', ViewUserAction::class);
-    })->add(CheckJWTTokenMiddleware::class);
-
     $app->group('/items', function (Group $group) {
         $group->get('', ListItemsAction::class);
         $group->get('/search', SearchItemsAction::class);
