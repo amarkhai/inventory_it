@@ -35,7 +35,7 @@ class RightInteractor
             throw new DomainWrongEntityParamException('User does not own this item.');
         }
 
-        return $this->rightRepository->findAllByItemId($itemId);
+        return $this->rightRepository->findAllByPath($item->getPath());
     }
 
     /**

@@ -55,14 +55,14 @@ class PDORightRepository implements RightRepositoryInterface
     }
 
     /**
-     * @param ItemIdValue $itemId
+     * @param ItemPathValue $path
      * @return Right[]
      * @throws DomainWrongEntityParamException
      */
-    public function findAllByItemId(ItemIdValue $itemId): array
+    public function findAllByPath(ItemPathValue $path): array
     {
-        $stmt = $this->connection->prepare('SELECT * FROM rights WHERE item_id=:item_id');
-        $stmt->bindValue(':item_id', $itemId->getValue());
+        $stmt = $this->connection->prepare('SELECT * FROM rights WHERE path=:path');
+        $stmt->bindValue(':path', $path->getValue());
         $stmt->execute();
         return array_map(fn ($row) => (new RightDataMapper())->map($row), $stmt->fetchAll());
     }
