@@ -15,10 +15,10 @@ use Ramsey\Uuid\UuidInterface;
 interface RightRepositoryInterface
 {
     /**
-     * @param ItemIdValue $itemId
+     * @param ItemPathValue $path
      * @return Right[]
      */
-    public function findAllByItemId(ItemIdValue $itemId): array;
+    public function findAllByPath(ItemPathValue $path): array;
 
     /**
      * @param Right $right
