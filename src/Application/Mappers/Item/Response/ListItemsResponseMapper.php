@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Mappers\Item\Response;
 
+use App\Application\DTO\Response\DataWithTotalCountResponseDTO;
 use App\Application\DTO\Response\Item\ListItemsResponseDTO;
 use App\Application\Mappers\MapperInterface;
 use App\Domain\Entity\Item\Item;
@@ -14,6 +15,7 @@ class ListItemsResponseMapper implements MapperInterface
      * @var Item[]
      */
     private array $items = [];
+    private int $totalCount;
 
     /**
      * @param Item[] $items
@@ -23,9 +25,28 @@ class ListItemsResponseMapper implements MapperInterface
         $this->items = $items;
     }
 
-    public function map(): array
+    /**
+     * @param int $totalCount
+     */
+    public function setTotalCount(int $totalCount): void
     {
+        $this->totalCount = $totalCount;
+    }
+
+    public function map(): DataWithTotalCountResponseDTO
+    {
+        return new DataWithTotalCountResponseDTO(
+            $this->getMappedItems(),
+            $this->totalCount
+        );
         //@todo отдавать права юзера на item
+    }
+
+    /**
+     * @return ListItemsResponseDTO[]
+     */
+    private function getMappedItems(): array
+    {
         return array_map(function ($item) {
             return new ListItemsResponseDTO(
                 $item->getId()->getValue(),

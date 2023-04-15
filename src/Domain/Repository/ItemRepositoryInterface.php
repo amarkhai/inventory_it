@@ -13,16 +13,28 @@ use Ramsey\Uuid\UuidInterface;
 interface ItemRepositoryInterface
 {
     /**
-     * @return Item[]
+     * @param UuidInterface $userId
+     * @param ItemPathValue|null $rootItemPath
+     * @param int $offset
+     * @param int $limit
+     * @return array
      */
-    public function findAll(): array;
+    public function findAllForUser(
+        UuidInterface $userId,
+        ?ItemPathValue $rootItemPath = null,
+        int $offset = 0,
+        int $limit = 20
+    ): array;
 
     /**
      * @param UuidInterface $userId
      * @param ItemPathValue|null $rootItemPath
-     * @return array
+     * @return int
      */
-    public function findAllForUser(UuidInterface $userId, ?ItemPathValue $rootItemPath = null): array;
+    public function countAllForUser(
+        UuidInterface $userId,
+        ?ItemPathValue $rootItemPath = null
+    ): int;
 
     /**
      * @param UuidInterface $userId
@@ -30,13 +42,6 @@ interface ItemRepositoryInterface
      * @return Item|null
      */
     public function findOneForUserById(UuidInterface $userId, ItemIdValue $itemId): ?Item;
-
-    /**
-     * @param UuidInterface $userId
-     * @param string $term
-     * @return Item[]
-     */
-    public function findAllForUserByTerm(UuidInterface $userId, string $term): array;
 
     public function insert(
         Item $item,

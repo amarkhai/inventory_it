@@ -29,11 +29,11 @@ class ListItemsAction extends Action
      */
     protected function action(): Response
     {
-        $dto = new ListItemsRequestDTO($this->request, $this->requestValidator);
-
-        $data = ($this->useCase)($dto);
+        $requestDto = new ListItemsRequestDTO($this->request, $this->requestValidator);
+        $responseDto = ($this->useCase)($requestDto);
 
         $this->logger->info("Items list was viewed.");
-        return $this->respondWithData($data);
+        return $this->respondWithData($responseDto->getData())
+            ->withHeader('X-Total-Count', (string) $responseDto->getTotalCount());
     }
 }
