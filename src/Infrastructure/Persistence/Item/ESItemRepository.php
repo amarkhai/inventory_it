@@ -27,12 +27,7 @@ class ESItemRepository extends ESRepository implements ItemSearchRepositoryInter
                 'filter' => [
                     [
                         'term' => [
-                            'owner_id' => $userId->toString(),
-                        ],
-                    ],
-                    [
-                        'term' => [
-                            'status' => ItemStatusEnum::active,
+                            'visible_for_users' => $userId->toString(),
                         ],
                     ],
                 ],
@@ -51,8 +46,8 @@ class ESItemRepository extends ESRepository implements ItemSearchRepositoryInter
                 "minimum_should_match" => 1
             ]
         ];
-        //@todo добавить поле со списком пользователей, у которых есть доступ к поиску и искать с учетом его
-
+        //@todo сделать наследование прав
+        //@todo выводить массив с названиями всех родительских элементов
         return array_map(
             fn ($row) => (new PartialItemDataMapper())->map($row['_source']),
             $this->getFoundedItems($this->search($query))

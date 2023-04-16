@@ -39,7 +39,7 @@
       "owner_id": {
         "type": "keyword"
       },
-      "status": {
+      "visible_for_users": {
         "type": "keyword"
       },
       "updated_at": {
