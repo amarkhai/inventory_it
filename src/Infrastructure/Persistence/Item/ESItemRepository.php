@@ -34,12 +34,18 @@ class ESItemRepository extends ESRepository implements ItemSearchRepositoryInter
                 'should' => [
                     [
                         'match' => [
-                            'name' => ['query' => $termValue->getValue()],
+                            'name' => [
+                                'query' => $termValue->getValue(),
+                                'fuzziness' => 'auto'
+                            ],
                         ],
                     ],
                     [
                         'match' => [
-                            'description' => ['query' => $termValue->getValue()]
+                            'description' => [
+                                'query' => $termValue->getValue(),
+                                'fuzziness' => 'auto'
+                            ]
                         ],
                     ],
                 ],
