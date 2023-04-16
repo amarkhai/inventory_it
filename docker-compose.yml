@@ -58,7 +58,6 @@ services:
   elasticsearch-seed:
     container_name: inventory_app_es_seed
     build: ./docker/elasticsearch/seed
-#    image: richardsilveira/elasticsearch-seed
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - INDEX_NAME=items
