@@ -46,7 +46,8 @@ class ESItemRepository extends ESRepository implements ItemSearchRepositoryInter
                 "minimum_should_match" => 1
             ]
         ];
-
+        //@todo сделать наследование прав
+        //@todo выводить массив с названиями всех родительских элементов
         return array_map(
             fn ($row) => (new PartialItemDataMapper())->map($row['_source']),
             $this->getFoundedItems($this->search($query))
